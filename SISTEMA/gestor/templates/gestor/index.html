@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Centro Médico Integral</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-heartbeat text-2xl text-blue-600"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900">MediCare</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#servicios" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Servicios</a>
+                        <a href="#especialidades" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Especialidades</a>
+                        <a href="#contacto" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Contacto</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'login' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                        Portal Pacientes
+                    </a>
+                    <a href="{% url 'login' %}" class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
+                        Acceso Médicos
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Info -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 text-balance">
+                    Tu Salud es Nuestra Prioridad
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-cyan-100 max-w-3xl mx-auto text-pretty">
+                    Centro médico integral con tecnología de vanguardia y profesionales altamente calificados para brindarte la mejor atención médica.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="portal-pacientes.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Reservar Cita
+                    </a>
+                    <a href="#servicios" class="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                        Conocer Servicios
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Ofrecemos una amplia gama de servicios médicos con la más alta calidad y tecnología avanzada.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-user-md text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Consulta General</h3>
+                    <p class="text-gray-600">Atención médica integral para toda la familia con profesionales experimentados.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-microscope text-2xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Laboratorio</h3>
+                    <p class="text-gray-600">Análisis clínicos completos con resultados rápidos y precisos.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-x-ray text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Imagenología</h3>
+                    <p class="text-gray-600">Rayos X, ecografías y estudios de imagen con equipos de última generación.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-ambulance text-2xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Urgencias</h3>
+                    <p class="text-gray-600">Atención de emergencias médicas las 24 horas del día, todos los días del año.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-pills text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Farmacia</h3>
+                    <p class="text-gray-600">Medicamentos de calidad y asesoría farmacéutica especializada.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-check text-2xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Citas Online</h3>
+                    <p class="text-gray-600">Sistema de reservas en línea disponible 24/7 para tu comodidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Especialidades -->
+    <section id="especialidades" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Especialidades Médicas</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Contamos con especialistas en las principales áreas de la medicina.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-heart text-3xl text-red-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Cardiología</h3>
+                </div>
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-brain text-3xl text-purple-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Neurología</h3>
+                </div>
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-child text-3xl text-green-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Pediatría</h3>
+                </div>
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-bone text-3xl text-orange-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Traumatología</h3>
+                </div>
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-eye text-3xl text-blue-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Oftalmología</h3>
+                </div>
+                <div class="text-center p-6 bg-white rounded-lg card-hover">
+                    <i class="fas fa-female text-3xl text-pink-500 mb-4"></i>
+                    <h3 class="font-semibold text-gray-900">Ginecología</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- info -->
+    <section class="py-20 bg-blue-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold mb-2">x+</div>
+                    <div class="text-blue-200">Años de Experiencia</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">xx+</div>
+                    <div class="text-blue-200">Médicos Especialistas</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">xxxxx+</div>
+                    <div class="text-blue-200">Pacientes Atendidos</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold mb-2">24/7</div>
+                    <div class="text-blue-200">Atención Disponible</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contáctanos</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Estamos aquí para ayudarte. Contáctanos para más información o para agendar una cita.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Dirección</h3>
+                                <p class="text-gray-600">Av. Principal 123, Centro Médico<br>Ciudad, País 12345</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-phone text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Teléfono</h3>
+                                <p class="text-gray-600">+56 9 xxxxxxx</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
+                                <p class="text-gray-600">info@medicare.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-clock text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Horarios</h3>
+                                <p class="text-gray-600">Lun - Vie: 8:00 AM - 8:00 PM<br>Sáb - Dom: 9:00 AM - 5:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <form class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                            <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mensaje</label>
+                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-heartbeat text-2xl text-blue-400"></i>
+                        <span class="ml-2 text-xl font-bold">MediCare</span>
+                    </div>
+                    <p class="text-gray-400">Centro médico integral comprometido con tu salud y bienestar.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Servicios</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Consulta General</a></li>
+                        <li><a href="#" class="hover:text-white">Especialidades</a></li>
+                        <li><a href="#" class="hover:text-white">Laboratorio</a></li>
+                        <li><a href="#" class="hover:text-white">Urgencias</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Enlaces</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="portal-pacientes.html" class="hover:text-white">Portal Pacientes</a></li>
+                        <li><a href="login.html" class="hover:text-white">Acceso Médicos</a></li>
+                        <li><a href="#" class="hover:text-white">Política de Privacidad</a></li>
+                        <li><a href="#" class="hover:text-white">Términos de Uso</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Síguenos</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 MediCare. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
