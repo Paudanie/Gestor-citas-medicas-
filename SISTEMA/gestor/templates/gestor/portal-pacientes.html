@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Mis Citas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            primary: '#2563eb',
+                            secondary: '#1e40af',
+                            accent: '#06b6d4',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="h-8 w-8 bg-medical-primary rounded-full flex items-center justify-center mr-3">
+                        <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">MediCare</h1>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="perfil.html" class="text-gray-600 hover:text-medical-primary transition-colors">Mi Portal</a>
+                    <a href="/login/PortalPacientes/" class="text-medical-primary font-medium">Mis Citas</a>
+                    <a href="/login/reservas/" class="text-gray-600 hover:text-medical-primary transition-colors">Reservar Cita</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Paciente">
+                        <span class="text-sm font-medium text-gray-700">paciente...</span>
+                    </div>
+                    <button onclick="logout()" class="text-gray-600 hover:text-medical-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Mis Citas Médicas</h2>
+                    <p class="text-gray-600 mt-1">Gestiona tus citas programadas</p>
+                </div>
+                <button onclick="window.location.href='/login/reservas/'" class="bg-medical-primary text-white px-6 py-3 rounded-lg hover:bg-medical-secondary transition-colors flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    Nueva Cita
+                </button>
+            </div>
+        </div>
+
+        <!-- Cartas (citas programadas) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-full mr-4">
+                        <svg class="w-6 h-6 text-medical-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Próximas Citas</p>
+                        <p class="text-2xl font-bold text-medical-primary">3</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-full mr-4">
+                        <svg class="w-6 h-6 text-medical-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Completadas</p>
+                        <p class="text-2xl font-bold text-medical-success">12</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-full mr-4">
+                        <svg class="w-6 h-6 text-medical-warning" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Pendientes</p>
+                        <p class="text-2xl font-bold text-medical-warning">1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de citas medicas (ejemplos) -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Citas Programadas</h3>
+            </div>
+            
+            <div class="divide-y divide-gray-200">
+                <!-- ejemplo 1 -->
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-primary rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Dr. Carlos García</h4>
+                                <p class="text-sm text-medical-primary">Cardiología</p>
+                                <div class="flex items-center mt-1 text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>15 de Enero, 2024 - 10:30 AM</span>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                        Confirmada
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editAppointment('CITA-001')" class="p-2 text-medical-accent hover:bg-cyan-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="cancelAppointment('CITA-001')" class="p-2 text-medical-danger hover:bg-red-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ejemplo 2 -->
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-success rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Dra. Ana López</h4>
+                                <p class="text-sm text-medical-primary">Medicina General</p>
+                                <div class="flex items-center mt-1 text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>22 de Enero, 2024 - 2:00 PM</span>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <span class="w-2 h-2 bg-yellow-400 rounded-full mr-1"></span>
+                                        Pendiente
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editAppointment('CITA-002')" class="p-2 text-medical-accent hover:bg-cyan-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="cancelAppointment('CITA-002')" class="p-2 text-medical-danger hover:bg-red-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ejemplo 3 -->
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-accent rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">Dr. Luis Martín</h4>
+                                <p class="text-sm text-medical-primary">Traumatología</p>
+                                <div class="flex items-center mt-1 text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>28 de Enero, 2024 - 11:15 AM</span>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                        Confirmada
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editAppointment('CITA-003')" class="p-2 text-medical-accent hover:bg-cyan-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="cancelAppointment('CITA-003')" class="p-2 text-medical-danger hover:bg-red-50 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado (Oculto) -->
+        <div id="emptyState" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center hidden">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10m6-10v10m-6-4h6"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes citas programadas</h3>
+            <p class="text-gray-600 mb-6">Agenda tu primera cita médica para comenzar</p>
+            <button onclick="window.location.href='reservar-cita.html'" class="bg-medical-primary text-white px-6 py-3 rounded-lg hover:bg-medical-secondary transition-colors">
+                Reservar Primera Cita
+            </button>
+        </div>
+    </main>
+
+    <!-- Editar modal -->
+    <div id="editarModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Editar Cita</h3>
+                    <button onclick="cerrareditarModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                            <input type="date" id="editDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-medical-primary focus:border-medical-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Hora</label>
+                            <select id="editarHora" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-medical-primary focus:border-medical-primary">
+                                <option>09:00 AM</option>
+                                <option>10:00 AM</option>
+                                <option>11:00 AM</option>
+                                <option>02:00 PM</option>
+                                <option>03:00 PM</option>
+                                <option>04:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la consulta</label>
+                        <textarea id="editReason" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-medical-primary focus:border-medical-primary" placeholder="Describe el motivo de tu consulta..."></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="cerrareditarModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-medical-primary text-white rounded-md hover:bg-medical-secondary">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmacion de cancelar la cita medica-->
+    <div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Cancelar Cita</h3>
+                <p class="text-sm text-gray-500 mb-6">¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer.</p>
+                
+                <div class="flex justify-center space-x-3">
+                    <button onclick="cerrarCancelModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        No, mantener
+                    </button>
+                    <button onclick="confirmCancel()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        Sí, cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de exito/error -->
+    <div id="successMessage" class="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg hidden">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span id="successText">Operación exitosa</span>
+        </div>
+    </div>
+
+    <script>
+        let currentAppointmentId = null;
+
+        function editAppointment(appointmentId) {
+            currentAppointmentId = appointmentId;
+            document.getElementById('editarModal').classList.remove('hidden');
+        }
+
+        function cerrareditarModal() {
+            document.getElementById('editarModal').classList.add('hidden');
+            currentAppointmentId = null;
+        }
+
+        function cancelAppointment(appointmentId) {
+            currentAppointmentId = appointmentId;
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
+
+        function cerrarCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+            currentAppointmentId = null;
+        }
+
+        function confirmCancel() {
+            // simula cancelación
+            showMessage('Cita cancelada exitosamente');
+            cerrarCancelModal();
+            
+            // Remueve el dato de la lista
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        }
+
+        function showMessage(text, duration = 3000) {
+            const messageElement = document.getElementById('successMessage');
+            const textElement = document.getElementById('successText');
+            textElement.textContent = text;
+            messageElement.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageElement.classList.add('hidden');
+            }, duration);
+        }
+
+        //Cerrar sesion
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Actualizar modal
+        document.querySelector('#editarModal form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showMessage('Cita actualizada exitosamente');
+            cerrareditarModal();
+        });
+    </script>
+</body>
+</html>

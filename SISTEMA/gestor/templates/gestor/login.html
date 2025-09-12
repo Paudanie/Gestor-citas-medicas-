@@ -220,8 +220,16 @@
                 
                 // Simula rediregimiento
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'panel.html';
                 }, 2000);
+
+            } else if (email === 'paciente@medicare.com' && password === 'demo456') {
+                showMessage('success');
+
+                setTimeout(() => {
+                    window.location.href = "/login/PortalPacientes/";
+                }, 2000);
+ 
             } else {
                 showMessage('error');
             }
