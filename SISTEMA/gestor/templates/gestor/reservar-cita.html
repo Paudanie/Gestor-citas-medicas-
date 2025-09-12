@@ -370,7 +370,7 @@
         </div>
     </div>
 
-    <!-- Success Modal (Inicalmente oculto) -->
+    <!-- Modal confirmación (Inicalmente oculto) -->
     <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl p-8 max-w-md mx-4">
             <div class="text-center">
@@ -414,15 +414,15 @@
         }
 
         function showpaso(paso) {
-            // Hide all pasos
+            // Ocultar todos los pasos
             for (let i = 1; i <= totalpasos; i++) {
                 document.getElementById(`paso-${i}`).classList.add('hidden');
             }
             
-            // Show current paso
+            // Mostrar pasos
             document.getElementById(`paso-${paso}`).classList.remove('hidden');
             
-            // Update buttons
+            // Ctualizar botones (mostrar/ocultar)
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             const confirmBtn = document.getElementById('confirm-btn');
@@ -444,7 +444,7 @@
             updatepasoIndicators();
         }
 
-        // Navigation
+        // Navegacion entre los pasos
         document.getElementById('next-btn').addEventListener('click', () => {
             if (currentpaso < totalpasos) {
                 currentpaso++;
@@ -463,7 +463,7 @@
             document.getElementById('success-modal').classList.remove('hidden');
         });
 
-        // Specialty selection
+        // Seleccionar especialidad
         document.querySelectorAll('.specialty-card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('.specialty-card').forEach(c => c.classList.remove('border-blue-500', 'bg-blue-50'));
@@ -471,7 +471,7 @@
             });
         });
 
-        // Doctor selection
+        // Seleccionar doctor
         document.querySelectorAll('.doctor-card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('border-blue-500', 'bg-blue-50'));
@@ -479,7 +479,7 @@
             });
         });
 
-        // Time slot selection
+        // Seleccionar hora
         document.querySelectorAll('.time-slot').forEach(slot => {
             slot.addEventListener('click', () => {
                 document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
@@ -487,7 +487,7 @@
             });
         });
 
-        // Initialize
+        // Inicializar
         showpaso(1);
     </script>
 </body>
