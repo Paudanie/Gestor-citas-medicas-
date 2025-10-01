@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import date
 
 
 # CLASS PREVIAS
@@ -28,9 +29,14 @@ class Tratamiento(models.Model):
     dosis = models.CharField(max_length=20)
     indicaciones = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.medicamento} {self.dosis}"
 
 
-# CLASS MÁS IMPORTANTES
+
+# --- CLASS MÁS IMPORTANTES ---
+
+# -- PERSONAS --
 class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usuario, la contraseña, y el manejo seguro de estos
     id_usuario = models.CharField(max_length=12, unique=True)
     fecha_nac = models.DateField()
@@ -38,20 +44,42 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     direccion = models.CharField(max_length=100)
     discapacidades = models.ManyToManyField(Discapacidad, blank=True) #Ahora, un Usuario puede tener varias Discapacidad dentro del campo "discapacidades", o incluso ninguna
 
+
+
+
 class Paciente(Usuario):
     enfermedades = models.ManyToManyField(Enfermedad, blank=True)
 #    tratamiento_actual = ¿Le pongo una lista de las recetas que tiene? Es que el doctor ya puede filtrarlas dentro de las mismas recetas, por la id del paciente...
+    
+    def __str__(self):
+        return f"{self.id_usuario} - {self.first_name} {self.last_name}"
+    
+    def tratamientos_vigentes(self):
+        #Devuelve los tratamientos de las recetas aún vigentes
+        hoy = date.today()
+        return Receta.objects.filter(paciente=self, vigente_hasta__gte=hoy)
+
+
+
+
 
 class Doctor(Usuario):
     especialidad = models.CharField(max_length=20)
-#    horario_trabajo = models.ManyToManyField(Horario)
-'''
-¿CÓMO HACER EL HORARIO?
-CHATGPT PROPONE COSAS DIFERENTES:
-- CREAR CADA BLOQUE DE HORARIO A TRAVÉS DE UNA NUEVA CLASS QUE TIENE DÍA DE LA SEMANA, HORAINICIO Y HORA FIN, 
-DE FORMA RECURRENTE, TAL VEZ CON UN SCRIPT
-- CREAR UN DATETIME ÚNICO. PARECE QUE ESTO TENDRÍA PROBLEMAS PARA USAR DICHO BLOQUE EN OTRO DOCTOR O CITA MÉDICA
-'''
+    #    horario_trabajo = models.ManyToManyField(Horario)
+    ''' ¿CÓMO HACER EL HORARIO?
+    CHATGPT PROPONE COSAS DIFERENTES:
+    - CREAR CADA BLOQUE DE HORARIO A TRAVÉS DE UNA NUEVA CLASS QUE TIENE DÍA DE LA SEMANA, HORAINICIO Y HORA FIN, 
+    DE FORMA RECURRENTE, TAL VEZ CON UN SCRIPT
+    - CREAR UN DATETIME ÚNICO. PARECE QUE ESTO TENDRÍA PROBLEMAS PARA USAR DICHO BLOQUE EN OTRO DOCTOR O CITA MÉDICA
+    '''
+    def __str__(self):
+        return f"Dr. {self.first_name} {self.last_name} ({self.especialidad})"
+    
+    def citas_pendientes(self):
+        #Devuelve las citas pendientes del doctor
+        return CitaMedica.objects.filter(doctor=self, estado="pendiente")
+  
+
 
 class Funcionario(Usuario):
     rol_trabajo = models.IntegerField(choices=[
@@ -62,13 +90,38 @@ class Funcionario(Usuario):
         (4, ""),
     ])
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.get_rol_trabajo_display()}"
 
+
+
+# -- OTRAS --
+class CitaMedica(models.Model):
+    id_cita = models.CharField(max_length=20, unique=True)
+    paciente = models.ForeignKey("Paciente", on_delete=models.CASCADE)
+    doctor = models.ForeignKey("Doctor", on_delete=models.CASCADE)
+    fecha_hora = models.DateTimeField()
+    estado = models.CharField(
+        max_length=20,
+        choices=[
+            ("pendiente", "Pendiente"),
+            ("confirmada", "Confirmada"),
+            ("cancelada", "Cancelada"),
+            ("finalizada", "Finalizada")
+        ],
+        default="pendiente"
+    )
+    notas = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Cita {self.id_cita} - {self.paciente} con {self.doctor} a las {self.fecha_hora}"
 
 
 class Receta(models.Model):
     id_receta = models.CharField(unique=True)
     doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
     paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE)
+    cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE) 
     tratamiento = models.ManyToManyField(Tratamiento)
     indicaciones_extra = models.CharField(max_length=200)
     fecha_emision = models.DateField()
@@ -77,19 +130,11 @@ class Receta(models.Model):
     def __str__(self):
         return self.nombre
 
-'''
-CHATGPT PROPONE QUE HAGAMOS DOS CLASS DIFERENTES:
-- CITA MÉDICA: LA CITA CON EL DOCTOR, EN LA AGENDA
-- ORDEN MÉDICA: LA ORDEN QUE EMITE EL DOCTOR, PARA EXAMEN, MEDICAMENTO, ETC. 
-NO NECESARIAMENTE TODAS LAS CITAS TENDRÁN UNA ORDEN MÉDICA.
-PERO CADA ORDEN MÉDICA DEBE HABERSE EMITIDO EN UNA CITA, ¿VERDAD?
-Por ende, OrdenMédica vendría a ser lo que yo hice en Receta, ¿cierto?
-'''
+
 
 class HistorialAsistencia(models.Model):
     paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE)
-    #cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE) 
-    #Aún no sé si separar las Citas, por eso lo comenté.
+    cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE) 
     asistencia = models.IntegerField(choices=[
         (0, "Pendiente"),
         (1, "Asistió"),
@@ -101,9 +146,24 @@ class HistorialAsistencia(models.Model):
     ])
     retraso_minutos = models.IntegerField(null=True)
 
+    def __str__(self):
+        return f"{self.paciente} - {self.get_asistencia_display()}"
+
+
+
+
+
+
+
+'''
+No hace falta esta class si usamos herramientas externas de chatbots de IA, como Rasa o LangChain.
+Además, esas herramientas almacenan y organizan los mensajes y conversaciones en otras BDs,
+y hasta puedes consultarlas para analizarlas y sacar estadísticas y conclusiones.
+
 class HistorialChatbot(models.Model):
     id_conversacion = models.CharField(unique=True)
     paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE)
     fechaHora_inicio = models.DateTimeField()
     fechaHora_termino = models.DateTimeField()
     texto_conversacion = models.TextField()
+'''
