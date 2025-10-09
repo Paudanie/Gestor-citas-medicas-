@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from .models import *
 from .forms import *
-
 
 def inicio(request):
     return render(request, 'gestor/index.html')
@@ -15,6 +17,16 @@ def reservas(request):
 def PortalPacientes(request):
     return render(request, 'gestor/portal-pacientes.html')
 
+
+# LISTAR
+# - Pacientes
+# - Doctores
+
+# CRUD USUARIOS???
+
+# CRUD CITAS
+
+# CRUD RECETAS
 
 
 def registro_usuario(request):
