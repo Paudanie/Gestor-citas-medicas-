@@ -35,7 +35,6 @@ class Tratamiento(models.Model):
 
 
 # --- CLASS MÁS IMPORTANTES ---
-
 # -- PERSONAS --
 class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usuario, la contraseña, y el manejo seguro de estos
     id_usuario = models.CharField(max_length=12, unique=True)
@@ -43,8 +42,6 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     telefono = models.IntegerField()
     direccion = models.CharField(max_length=100)
     discapacidades = models.ManyToManyField(Discapacidad, blank=True) #Ahora, un Usuario puede tener varias Discapacidad dentro del campo "discapacidades", o incluso ninguna
-
-
 
 
 class Paciente(Usuario):
@@ -58,9 +55,6 @@ class Paciente(Usuario):
         #Devuelve los tratamientos de las recetas aún vigentes
         hoy = date.today()
         return Receta.objects.filter(paciente=self, vigente_hasta__gte=hoy)
-
-
-
 
 
 class Doctor(Usuario):
@@ -79,7 +73,6 @@ class Doctor(Usuario):
         #Devuelve las citas pendientes del doctor
         return CitaMedica.objects.filter(doctor=self, estado="pendiente")
   
-
 
 class Funcionario(Usuario):
     rol_trabajo = models.IntegerField(choices=[
@@ -129,7 +122,6 @@ class Receta(models.Model):
 
     def __str__(self):
         return self.nombre
-
 
 
 class HistorialAsistencia(models.Model):
