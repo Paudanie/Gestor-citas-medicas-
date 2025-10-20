@@ -1,12 +1,12 @@
 from django.urls import path, include
-from . import views
+from . import views00
 
 urlpatterns = [
-    path('',views.inicio, name='index'),
-    path('login/',views.login, name='login'),
-    path('reservas/',views.reservas, name='reservas'),
-    path('PortalPacientes/',views.PortalPacientes, name='PortalPacientes'),
-    path('login/PortalPacientes/', views.PortalPacientes, name='PortalPacientes'),
-    path('login/reservas/', views.reservas, name='reservar_cita')
+    path('',views00.inicio, name='index'),
+    path('login/',views00.login, name='login'),
+    path('reservas/',views00.reservas, name='reservas'),
+    path('PortalPacientes/',views00.PortalPacientes, name='PortalPacientes'),
+    path('login/PortalPacientes/', views00.PortalPacientes, name='PortalPacientes'),
+    path('login/reservas/', views00.reservas, name='reservar_cita')
 ]
 
