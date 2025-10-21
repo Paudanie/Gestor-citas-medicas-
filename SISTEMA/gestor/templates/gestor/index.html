@@ -3,261 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediCare - Centro Médico Integral</title>
+    <title>MediCare - Sistema de Gestión Médica</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            primary: '#2563eb',
+                            secondary: '#1e40af',
+                            accent: '#06b6d4',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
         }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    </script>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<body class="bg-white font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-heartbeat text-2xl text-blue-600"></i>
-                        <span class="ml-2 text-xl font-bold text-gray-900">MediCare</span>
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-10 w-10 bg-medical-primary rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-gray-900">MediCare</span>
                     </div>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#servicios" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Servicios</a>
-                        <a href="#especialidades" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Especialidades</a>
-                        <a href="#contacto" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium">Contacto</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{% url 'login' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                        Portal Pacientes
-                    </a>
-                    <a href="{% url 'login' %}" class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
-                        Acceso Médicos
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Info -->
-    <section class="hero-gradient text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6 text-balance">
-                    Tu Salud es Nuestra Prioridad
-                </h1>
-                <p class="text-xl md:text-2xl mb-8 text-cyan-100 max-w-3xl mx-auto text-pretty">
-                    Centro médico integral con tecnología de vanguardia y profesionales altamente calificados para brindarte la mejor atención médica.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="portal-pacientes.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#servicios" class="text-gray-700 hover:text-medical-primary transition-colors">Servicios</a>
+                    <a href="#especialidades" class="text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
+                    <a href="#doctores" class="text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
+                    <a href="#contacto" class="text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
+                    <a href="login.html" class="text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                    <button onclick="openReservaModal()" class="bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg shadow-lg">
                         Reservar Cita
-                    </a>
-                    <a href="#servicios" class="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-                        Conocer Servicios
-                    </a>
+                    </button>
+                </div>
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200">
+            <div class="px-4 py-3 space-y-3">
+                <a href="#servicios" class="block text-gray-700 hover:text-medical-primary transition-colors">Servicios</a>
+                <a href="#especialidades" class="block text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
+                <a href="#doctores" class="block text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
+                <a href="#contacto" class="block text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
+                <a href="login.html" class="block text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                <button onclick="openReservaModal()" class="block bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-center text-lg shadow-lg">
+                    Reservar Cita
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-50 to-cyan-50 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                        Tu salud es nuestra prioridad
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+                        Sistema integral de gestión médica con los mejores especialistas. Agenda tu cita en minutos y recibe atención de calidad.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="openReservaModal()" class="bg-medical-primary text-white px-8 py-4 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg text-center shadow-lg">
+                            Reservar Cita Ahora
+                        </button>
+                        <a href="registro.html" class="bg-white text-medical-primary px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors font-medium text-lg text-center border-2 border-medical-primary">
+                            Crear Cuenta
+                        </a>
+                    </div>
+                    <div class="mt-8 flex items-center space-x-6 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-medical-success mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Sin necesidad de cuenta
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-medical-success mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Respuesta rápida
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <img src="imagenes/logo2.png" height=500&width=600" alt="Clínica MediCare" class="rounded-lg shadow-2xl">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Servicios -->
-    <section id="servicios" class="py-20 bg-white">
+    <!-- Stats Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-medical-primary mb-2">15+</div>
+                    <div class="text-gray-600">Años de experiencia</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-medical-primary mb-2">50+</div>
+                    <div class="text-gray-600">Especialistas</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-medical-primary mb-2">10k+</div>
+                    <div class="text-gray-600">Pacientes atendidos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-medical-primary mb-2">98%</div>
+                    <div class="text-gray-600">Satisfacción</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Ofrecemos una amplia gama de servicios médicos con la más alta calidad y tecnología avanzada.
-                </p>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Ofrecemos atención médica integral con tecnología de punta y profesionales altamente calificados</p>
             </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-user-md text-2xl text-blue-600"></i>
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-medical-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Consulta General</h3>
-                    <p class="text-gray-600">Atención médica integral para toda la familia con profesionales experimentados.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Consultas Médicas</h3>
+                    <p class="text-gray-600">Atención médica general y especializada con citas programadas y seguimiento personalizado.</p>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-microscope text-2xl text-cyan-600"></i>
+
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-medical-accent" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Laboratorio</h3>
-                    <p class="text-gray-600">Análisis clínicos completos con resultados rápidos y precisos.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Exámenes de Laboratorio</h3>
+                    <p class="text-gray-600">Análisis clínicos completos con resultados rápidos y precisos para diagnósticos certeros.</p>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-x-ray text-2xl text-blue-600"></i>
+
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-medical-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Imagenología</h3>
-                    <p class="text-gray-600">Rayos X, ecografías y estudios de imagen con equipos de última generación.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Medicina Preventiva</h3>
+                    <p class="text-gray-600">Programas de prevención y chequeos regulares para mantener tu salud en óptimas condiciones.</p>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-ambulance text-2xl text-cyan-600"></i>
+
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-medical-danger" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Urgencias</h3>
-                    <p class="text-gray-600">Atención de emergencias médicas las 24 horas del día, todos los días del año.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Urgencias 24/7</h3>
+                    <p class="text-gray-600">Atención de emergencias las 24 horas del día, los 7 días de la semana.</p>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-pills text-2xl text-blue-600"></i>
+
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-medical-warning" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Farmacia</h3>
-                    <p class="text-gray-600">Medicamentos de calidad y asesoría farmacéutica especializada.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Telemedicina</h3>
+                    <p class="text-gray-600">Consultas médicas virtuales desde la comodidad de tu hogar.</p>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-calendar-check text-2xl text-cyan-600"></i>
+
+                <div class="bg-white rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Citas Online</h3>
-                    <p class="text-gray-600">Sistema de reservas en línea disponible 24/7 para tu comodidad.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Recetas Digitales</h3>
+                    <p class="text-gray-600">Gestión digital de recetas médicas con seguimiento de tratamientos.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Especialidades -->
-    <section id="especialidades" class="py-20 bg-gray-50">
+    <!-- Specialties Section -->
+    <section id="especialidades" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Especialidades Médicas</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Contamos con especialistas en las principales áreas de la medicina.
-                </p>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Contamos con especialistas en diversas áreas de la medicina</p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-heart text-3xl text-red-500 mb-4"></i>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">❤️</div>
                     <h3 class="font-semibold text-gray-900">Cardiología</h3>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-brain text-3xl text-purple-500 mb-4"></i>
-                    <h3 class="font-semibold text-gray-900">Neurología</h3>
-                </div>
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-child text-3xl text-green-500 mb-4"></i>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">👶</div>
                     <h3 class="font-semibold text-gray-900">Pediatría</h3>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-bone text-3xl text-orange-500 mb-4"></i>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">🦴</div>
                     <h3 class="font-semibold text-gray-900">Traumatología</h3>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-eye text-3xl text-blue-500 mb-4"></i>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">🧠</div>
+                    <h3 class="font-semibold text-gray-900">Neurología</h3>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">👁️</div>
                     <h3 class="font-semibold text-gray-900">Oftalmología</h3>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg card-hover">
-                    <i class="fas fa-female text-3xl text-pink-500 mb-4"></i>
-                    <h3 class="font-semibold text-gray-900">Ginecología</h3>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">🦷</div>
+                    <h3 class="font-semibold text-gray-900">Odontología</h3>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">🩺</div>
+                    <h3 class="font-semibold text-gray-900">Medicina General</h3>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:bg-blue-50 transition-colors border border-gray-200">
+                    <div class="text-3xl mb-3">💉</div>
+                    <h3 class="font-semibold text-gray-900">Dermatología</h3>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- info -->
-    <section class="py-20 bg-blue-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <div class="text-4xl font-bold mb-2">x+</div>
-                    <div class="text-blue-200">Años de Experiencia</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold mb-2">xx+</div>
-                    <div class="text-blue-200">Médicos Especialistas</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold mb-2">xxxxx+</div>
-                    <div class="text-blue-200">Pacientes Atendidos</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold mb-2">24/7</div>
-                    <div class="text-blue-200">Atención Disponible</div>
-                </div>
-            </div>
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-medical-primary to-medical-accent">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">¿Listo para cuidar tu salud?</h2>
+            <p class="text-xl text-blue-100 mb-8">Agenda tu cita ahora mismo, sin necesidad de crear una cuenta</p>
+            <button onclick="openReservaModal()" class="inline-block bg-white text-medical-primary px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium text-lg shadow-lg">
+                Reservar Cita Ahora
+            </button>
         </div>
     </section>
 
-    <!-- Contacto -->
-    <section id="contacto" class="py-20 bg-white">
+    <!-- Contact Section -->
+    <section id="contacto" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contáctanos</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Estamos aquí para ayudarte. Contáctanos para más información o para agendar una cita.
-                </p>
-            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div>
-                    <div class="space-y-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Contáctanos</h2>
+                    <p class="text-lg text-gray-600 mb-8">Estamos aquí para ayudarte. Contáctanos por cualquiera de estos medios.</p>
+                    
+                    <div class="space-y-6">
                         <div class="flex items-start">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-primary rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                    </svg>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Dirección</h3>
-                                <p class="text-gray-600">Av. Principal 123, Centro Médico<br>Ciudad, País 12345</p>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Teléfono</h3>
+                                <p class="text-gray-600">+xx xxx xxx xxx</p>
+                                <p class="text-sm text-gray-500">Lunes a Viernes: 8:00 - 20:00</p>
                             </div>
                         </div>
+
                         <div class="flex items-start">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-phone text-blue-600"></i>
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-accent rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                    </svg>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Teléfono</h3>
-                                <p class="text-gray-600">+56 9 xxxxxxx</p>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Email</h3>
+                                <p class="text-gray-600">contacto@medicare.com</p>
+                                <p class="text-sm text-gray-500">Respuesta en 24 horas</p>
                             </div>
                         </div>
+
                         <div class="flex items-start">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-envelope text-blue-600"></i>
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-medical-success rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
-                                <p class="text-gray-600">info@medicare.com</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-clock text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 mb-2">Horarios</h3>
-                                <p class="text-gray-600">Lun - Vie: 8:00 AM - 8:00 PM<br>Sáb - Dom: 9:00 AM - 5:00 PM</p>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Dirección</h3>
+                                <p class="text-gray-600">Calle Principal 123</p>
+                                <p class="text-sm text-gray-500">Curico, Chile</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl">
-                    <form class="space-y-6">
+
+                <div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Envíanos un mensaje</h3>
+                    <form class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
-                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                            <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Mensaje</label>
-                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" required></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        <button type="submit" class="w-full bg-medical-primary text-white px-6 py-3 rounded-lg hover:bg-medical-secondary transition-colors font-medium">
                             Enviar Mensaje
                         </button>
                     </form>
@@ -272,51 +358,348 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center mb-4">
-                        <i class="fas fa-heartbeat text-2xl text-blue-400"></i>
-                        <span class="ml-2 text-xl font-bold">MediCare</span>
+                        <div class="h-10 w-10 bg-medical-primary rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-xl font-bold">MediCare</span>
                     </div>
-                    <p class="text-gray-400">Centro médico integral comprometido con tu salud y bienestar.</p>
+                    <p class="text-gray-400 text-sm">Sistema integral de gestión médica para tu bienestar.</p>
                 </div>
+                
                 <div>
-                    <h3 class="font-semibold mb-4">Servicios</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white">Consulta General</a></li>
-                        <li><a href="#" class="hover:text-white">Especialidades</a></li>
-                        <li><a href="#" class="hover:text-white">Laboratorio</a></li>
-                        <li><a href="#" class="hover:text-white">Urgencias</a></li>
+                    <h3 class="font-semibold mb-4">Enlaces Rápidos</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#servicios" class="hover:text-white transition-colors">Servicios</a></li>
+                        <li><a href="#especialidades" class="hover:text-white transition-colors">Especialidades</a></li>
+                        <li><a href="#doctores" class="hover:text-white transition-colors">Doctores</a></li>
+                        <li><a href="#contacto" class="hover:text-white transition-colors">Contacto</a></li>
                     </ul>
                 </div>
+                
                 <div>
-                    <h3 class="font-semibold mb-4">Enlaces</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="portal-pacientes.html" class="hover:text-white">Portal Pacientes</a></li>
-                        <li><a href="login.html" class="hover:text-white">Acceso Médicos</a></li>
-                        <li><a href="#" class="hover:text-white">Política de Privacidad</a></li>
-                        <li><a href="#" class="hover:text-white">Términos de Uso</a></li>
+                    <h3 class="font-semibold mb-4">Para Pacientes</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="login.html" class="hover:text-white transition-colors">Iniciar Sesión</a></li>
+                        <li><a href="registro.html" class="hover:text-white transition-colors">Crear Cuenta</a></li>
+                        <li><a href="mis-citas.html" class="hover:text-white transition-colors">Mis Citas</a></li>
                     </ul>
                 </div>
+                
                 <div>
-                    <h3 class="font-semibold mb-4">Síguenos</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-facebook-f text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="fab fa-linkedin-in text-xl"></i>
-                        </a>
-                    </div>
+                    <h3 class="font-semibold mb-4">Horario</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>Lunes - Viernes: 8:00 - 20:00</li>
+                        <li>Sábados: 9:00 - 14:00</li>
+                        <li>Domingos: Cerrado</li>
+                        <li class="text-medical-accent">Urgencias 24/7</li>
+                    </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
                 <p>&copy; 2025 MediCare. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Modal de Reserva de Cita -->
+    <div id="reservaModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 mb-10">
+            <div class="bg-white rounded-lg shadow-2xl">
+                <!-- Header del Modal -->
+                <div class="bg-gradient-to-r from-medical-primary to-medical-accent px-6 py-4 rounded-t-lg">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-bold text-white">Reservar Cita Médica</h3>
+                        <button onclick="closeReservaModal()" class="text-white hover:text-gray-200 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-blue-100 mt-2">Complete el formulario y nos pondremos en contacto para confirmar su cita</p>
+                </div>
+
+                <!-- Formulario -->
+                <form id="reservaForm" class="p-6 space-y-6" onsubmit="handleReservaSubmit(event)">
+                    <!-- Información del Paciente -->
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-medical-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            Información del Paciente
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo *</label>
+                                <input type="text" name="nombre" required maxlength="255" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" placeholder="Juan Pérez García">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                <input type="email" name="email" required maxlength="254" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" placeholder="juan@ejemplo.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+                                <input type="tel" name="telefono" required maxlength="15" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" placeholder="+34 600 000 000">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento *</label>
+                                <input type="date" name="fecha_nac" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de la Cita -->
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-medical-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Detalles de la Cita
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Especialidad *</label>
+                                <select name="especialidad" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" onchange="updateDoctores(this.value)">
+                                    <option value="">Seleccione una especialidad</option>
+                                    <option value="cardiologia">Cardiología</option>
+                                    <option value="pediatria">Pediatría</option>
+                                    <option value="traumatologia">Traumatología</option>
+                                    <option value="neurologia">Neurología</option>
+                                    <option value="oftalmologia">Oftalmología</option>
+                                    <option value="odontologia">Odontología</option>
+                                    <option value="medicina_general">Medicina General</option>
+                                    <option value="dermatologia">Dermatología</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Doctor (Opcional)</label>
+                                <select name="doctor" id="doctorSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent">
+                                    <option value="">Cualquier doctor disponible</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Preferida *</label>
+                                <input type="date" name="fecha" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" min="">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Hora Preferida *</label>
+                                <select name="hora" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent">
+                                    <option value="">Seleccione una hora</option>
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="09:30">09:30 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="12:30">12:30 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="16:30">04:30 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                    <option value="17:30">05:30 PM</option>
+                                    <option value="18:00">06:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notas Adicionales -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la Consulta / Notas</label>
+                        <textarea name="notas" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent" placeholder="Describa brevemente el motivo de su consulta o cualquier información relevante..."></textarea>
+                    </div>
+
+                    <!-- Aviso -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex">
+                            <svg class="w-5 h-5 text-medical-primary flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-700">
+                                    <strong>Importante:</strong> Esta es una solicitud de cita. Nuestro equipo se pondrá en contacto con usted para confirmar la disponibilidad y finalizar la reserva.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                        <button type="button" onclick="closeReservaModal()" class="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 px-6 py-3 bg-medical-primary text-white rounded-lg hover:bg-medical-secondary transition-colors font-medium shadow-lg">
+                            Enviar Solicitud
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div id="confirmacionModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-1/4 mx-auto p-5 w-11/12 md:w-96">
+            <div class="bg-white rounded-lg shadow-2xl p-6">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                        <svg class="h-8 w-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">¡Solicitud Enviada!</h3>
+                    <p class="text-gray-600 mb-6">Hemos recibido su solicitud de cita. Nos pondremos en contacto con usted pronto para confirmar la disponibilidad.</p>
+                    <button onclick="closeConfirmacionModal()" class="w-full bg-medical-primary text-white px-6 py-3 rounded-lg hover:bg-medical-secondary transition-colors font-medium">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function openReservaModal() {
+            document.getElementById('reservaModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // Establecer fecha mínima como hoy
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="fecha"]').setAttribute('min', today);
+        }
+
+        function closeReservaModal() {
+            document.getElementById('reservaModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('reservaForm').reset();
+        }
+
+        function closeConfirmacionModal() {
+            document.getElementById('confirmacionModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Datos de ejemplo de doctores por especialidad
+        const doctoresPorEspecialidad = {
+            cardiologia: [
+                { id: 1, nombre: 'Dr. Carlos García' },
+                { id: 2, nombre: 'Dra. María Rodríguez' }
+            ],
+            pediatria: [
+                { id: 3, nombre: 'Dra. Ana López' },
+                { id: 4, nombre: 'Dr. Pedro Martínez' }
+            ],
+            traumatologia: [
+                { id: 5, nombre: 'Dr. Luis Martín' },
+                { id: 6, nombre: 'Dra. Carmen Sánchez' }
+            ],
+            neurologia: [
+                { id: 7, nombre: 'Dr. José Fernández' },
+                { id: 8, nombre: 'Dra. Laura González' }
+            ],
+            oftalmologia: [
+                { id: 9, nombre: 'Dr. Miguel Torres' },
+                { id: 10, nombre: 'Dra. Isabel Ruiz' }
+            ],
+            odontologia: [
+                { id: 11, nombre: 'Dr. Antonio Díaz' },
+                { id: 12, nombre: 'Dra. Rosa Moreno' }
+            ],
+            medicina_general: [
+                { id: 13, nombre: 'Dr. Francisco Jiménez' },
+                { id: 14, nombre: 'Dra. Elena Álvarez' }
+            ],
+            dermatologia: [
+                { id: 15, nombre: 'Dr. Roberto Castro' },
+                { id: 16, nombre: 'Dra. Patricia Romero' }
+            ]
+        };
+
+        function updateDoctores(especialidad) {
+            const doctorSelect = document.getElementById('doctorSelect');
+            doctorSelect.innerHTML = '<option value="">Cualquier doctor disponible</option>';
+            
+            if (especialidad && doctoresPorEspecialidad[especialidad]) {
+                doctoresPorEspecialidad[especialidad].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = doctor.nombre;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        }
+
+        function handleReservaSubmit(event) {
+            event.preventDefault();
+            
+            // Aquí se enviaría la información al backend de Django
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            console.log('[v0] Datos de la reserva:', data);
+            
+            // Simular envío exitoso
+            closeReservaModal();
+            document.getElementById('confirmacionModal').classList.remove('hidden');
+            
+            // En producción, aquí harías una petición AJAX al backend:
+            /*
+            fetch('/api/reservar-cita/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                closeReservaModal();
+                document.getElementById('confirmacionModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al enviar la solicitud. Por favor, inténtelo de nuevo.');
+            });
+            */
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Cerrar el menu
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Cerrar modales al hacer clic fuera de ellos
+        document.getElementById('reservaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReservaModal();
+            }
+        });
+
+        document.getElementById('confirmacionModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmacionModal();
+            }
+        });
+    </script>
 </body>
 </html>

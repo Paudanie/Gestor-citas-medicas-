@@ -27,7 +27,7 @@
 <body class="bg-gradient-to-br from-blue-50 to-cyan-50 min-h-screen font-sans">
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
-            <!-- Logo -->
+            <!-- Logo and Header -->
             <div class="text-center">
                 <div class="mx-auto h-16 w-16 bg-medical-primary rounded-full flex items-center justify-center mb-4">
                     <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -38,17 +38,20 @@
                 <p class="text-gray-600">Sistema de Gestión Médica</p>
             </div>
 
-            <!-- Login Formulario -->
+            <!-- Login Form -->
             <div class="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold text-gray-900 text-center mb-2">Iniciar Sesión</h3>
                     <p class="text-sm text-gray-600 text-center">Accede a tu panel de control médico</p>
                 </div>
 
-                <form class="space-y-6" onsubmit="handleLogin(event)">
+                <form class="space-y-6" action="/login/" method="POST">
+                    <!-- Agregado campo CSRF token para Django -->
+                    {% csrf_token %}
+                    
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Correo Electrónico
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                            Usuario o Email
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,13 +60,14 @@
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                                 </svg>
                             </div>
+                            <!-- Cambiado name a username para Django auth -->
                             <input 
-                                id="email" 
-                                name="email" 
-                                type="email" 
+                                id="username" 
+                                name="username" 
+                                type="text" 
                                 required 
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent transition-colors"
-                                placeholder="doctor@medicare.com"
+                                placeholder="usuario@medicare.com"
                             >
                         </div>
                     </div>
@@ -113,7 +117,7 @@
                         </div>
 
                         <div class="text-sm">
-                            <a href="#" class="font-medium text-medical-primary hover:text-medical-secondary transition-colors">
+                            <a href="/password-reset/" class="font-medium text-medical-primary hover:text-medical-secondary transition-colors">
                                 ¿Olvidaste tu contraseña?
                             </a>
                         </div>
@@ -134,14 +138,12 @@
                     </div>
                 </form>
 
-                <!-- Credenciales de prueba de doctor -->
+                <!-- Demo Credentials -->
                 <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <h4 class="text-sm font-medium text-blue-900 mb-2">Credenciales de Demostración:</h4>
                     <div class="text-xs text-blue-700 space-y-1">
-                        <p><strong>Email:</strong> doctor@medicare.com</p>
-                        <p><strong>Contraseña:</strong> demo123</p>
-                        <p><strong>Email:</strong> paciente@medicare.com</p>
-                        <p><strong>Contraseña:</strong> demo456</p>
+                        <p><strong>Doctor:</strong> doctor@medicare.com / demo123</p>
+                        <p><strong>Paciente:</strong> paciente@medicare.com / demo123</p>
                     </div>
                 </div>
             </div>
@@ -150,8 +152,8 @@
             <div class="text-center">
                 <p class="text-sm text-gray-600">
                     ¿No tienes cuenta? 
-                    <a href="#" class="font-medium text-medical-primary hover:text-medical-secondary transition-colors">
-                        Contacta al administrador
+                    <a href="registro.html" class="font-medium text-medical-primary hover:text-medical-secondary transition-colors">
+                        Regístrate aquí
                     </a>
                 </p>
                 <p class="text-xs text-gray-500 mt-2">
@@ -161,7 +163,7 @@
         </div>
     </div>
 
-    <!-- Mensaje de Inicio exitoso (oculto) -->
+    <!-- Mensaje (Oculto) -->
     <div id="successMessage" class="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg hidden">
         <div class="flex items-center">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -171,7 +173,7 @@
         </div>
     </div>
 
-    <!-- Mensaje de error (oculto) -->
+    <!-- Mensaje de error: (Oculto) -->
     <div id="errorMessage" class="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg hidden">
         <div class="flex items-center">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -200,55 +202,6 @@
                 `;
             }
         }
-
-        function showMessage(type, duration = 3000) {
-            const messageElement = document.getElementById(type + 'Message');
-            messageElement.classList.remove('hidden');
-            
-            setTimeout(() => {
-                messageElement.classList.add('hidden');
-            }, duration);
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Validacion de prueba con estas credenciales
-            if (email === 'doctor@medicare.com' && password === 'demo123') {
-                showMessage('success');
-                
-                // Simula rediregimiento
-                setTimeout(() => {
-                    window.location.href = 'panel.html';
-                }, 2000);
-
-            } else if (email === 'paciente@medicare.com' && password === 'demo456') {
-                showMessage('success');
-
-                setTimeout(() => {
-                    window.location.href = "/login/PortalPacientes/";
-                }, 2000);
- 
-            } else {
-                showMessage('error');
-            }
-        }
-
-        // mensaje se oculta
-        document.addEventListener('click', function(event) {
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            if (!successMessage.contains(event.target)) {
-                successMessage.classList.add('hidden');
-            }
-            if (!errorMessage.contains(event.target)) {
-                errorMessage.classList.add('hidden');
-            }
-        });
     </script>
 </body>
 </html>
