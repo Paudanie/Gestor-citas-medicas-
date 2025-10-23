@@ -43,6 +43,21 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     direccion = models.CharField(max_length=100)
     discapacidades = models.ManyToManyField(Discapacidad, blank=True) #Ahora, un Usuario puede tener varias Discapacidad dentro del campo "discapacidades", o incluso ninguna
 
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='gestor_usuario_groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='gestor_usuario_permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+
 
 class Paciente(Usuario):
     enfermedades = models.ManyToManyField(Enfermedad, blank=True)

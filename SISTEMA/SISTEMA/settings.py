@@ -64,9 +64,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.static',
             ],
         },
     },
+]
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'gestor' / 'templates' / 'gestor' / 'imagenes',
 ]
 
 WSGI_APPLICATION = 'SISTEMA.wsgi.application'
