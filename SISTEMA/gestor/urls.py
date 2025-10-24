@@ -36,8 +36,10 @@ urlpatterns = [
     # ======================================================
     path('citas/', views.listar_citas, name='listar_citas'),
     path('citas/crear/', views.crear_cita, name='crear_cita'),
+    path('crear_reserva/', views.crear_reserva, name='crear_reserva'),
     path('citas/editar/<int:id>/', views.editar_cita, name='editar_cita'),
     path('citas/eliminar/<int:id>/', views.eliminar_cita, name='eliminar_cita'),
+    path('guardar-solicitud/', views.guardar_solicitud_cita, name='guardar_solicitud'),
 
     # ======================================================
     # =================== RECETAS ==========================

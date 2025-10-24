@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.http import JsonResponse
+from .models import SolicitudCita
+from .models import CitaMedica, Paciente, Doctor
+from datetime import datetime
 from .models import *
 from .forms import *
 
@@ -200,6 +204,70 @@ def eliminar_cita(request, id):
         return redirect('listar_citas')
     return render(request, 'gestor/cita_confirm_delete.html', {'cita': cita})
 
+
+
+def guardar_solicitud_cita(request):
+    if request.method == "POST":
+        try:
+            SolicitudCita.objects.create(
+                nombre=request.POST.get("nombre"),
+                email=request.POST.get("email"),
+                telefono=request.POST.get("telefono"),
+                fecha_nac=request.POST.get("fecha_nac"),
+                especialidad=request.POST.get("especialidad"),
+                doctor_id=request.POST.get("doctor") or None,
+                fecha=request.POST.get("fecha"),
+                hora=request.POST.get("hora"),
+                notas=request.POST.get("notas", "")
+            )
+            return JsonResponse({"success": True, "message": "Solicitud enviada correctamente."})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"Error: {str(e)}"})
+    
+    return JsonResponse({"success": False, "message": "Método no permitido."})
+
+def crear_reserva(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        email = request.POST.get('email')
+        telefono = request.POST.get('telefono')
+        fecha_nac = request.POST.get('fecha_nac')
+        especialidad = request.POST.get('especialidad')
+        doctor_id = request.POST.get('doctor')
+        fecha = request.POST.get('fecha')
+        hora = request.POST.get('hora')
+        notas = request.POST.get('notas')
+
+        # Buscar doctor (si el usuario seleccionó uno)
+        doctor = Doctor.objects.filter(id_usuario=doctor_id).first() if doctor_id else None
+
+        # Crear un paciente básico (solo si no existe uno con el mismo email)
+        paciente, created = Paciente.objects.get_or_create(
+            username=email,  # necesario para AbstractUser
+            defaults={
+                'first_name': nombre,
+                'email': email,
+                'telefono': telefono,
+                'fecha_nac': fecha_nac,
+                'direccion': 'No especificada',
+                'id_usuario': f'P{telefono}',  # generar ID básico
+            }
+        )
+
+        # Crear cita
+        CitaMedica.objects.create(
+            id_cita=f"CITA_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+            paciente=paciente,
+            doctor=doctor if doctor else Doctor.objects.first(),
+            fecha_hora=f"{fecha} {hora}",
+            estado='pendiente',
+            notas=notas
+        )
+
+        messages.success(request, 'Tu solicitud de cita fue enviada correctamente.')
+        return redirect('portal_pacientes')  # o donde quieras redirigir
+
+    return redirect('portal_pacientes')
 
 # ======================================================
 # =================== CRUD RECETAS =====================

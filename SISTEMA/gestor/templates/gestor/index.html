@@ -24,6 +24,48 @@
             }
         }
     </script>
+    <script>
+        async function handleReservaSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const response = await fetch("{% url 'guardar_solicitud' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("✅ Solicitud enviada correctamente. Nos contactaremos pronto para confirmar su cita.");
+                closeReservaModal();
+                form.reset();
+            } else {
+                alert("❌ " + data.message);
+            }
+        }
+
+        // Función para obtener CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+</script>
+
 </head>
 <body class="bg-white font-sans">
     <!-- Navigation -->
@@ -423,7 +465,8 @@
                 </div>
 
                 <!-- Formulario -->
-                <form id="reservaForm" class="p-6 space-y-6" onsubmit="handleReservaSubmit(event)">
+                <form method="POST" action="{% url 'crear_reserva' %}" class="p-6 space-y-6">
+                    {% csrf_token %}
                     <!-- Información del Paciente -->
                     <div>
                         <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">

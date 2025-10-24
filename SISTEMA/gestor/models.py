@@ -158,6 +158,41 @@ class HistorialAsistencia(models.Model):
         return f"{self.paciente} - {self.get_asistencia_display()}"
 
 
+class SolicitudCita(models.Model):
+    nombre = models.CharField(max_length=255)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=15)
+    fecha_nac = models.DateField()
+
+    especialidad = models.CharField(max_length=50, choices=[
+        ('cardiologia', 'Cardiología'),
+        ('pediatria', 'Pediatría'),
+        ('traumatologia', 'Traumatología'),
+        ('neurologia', 'Neurología'),
+        ('oftalmologia', 'Oftalmología'),
+        ('odontologia', 'Odontología'),
+        ('medicina_general', 'Medicina General'),
+        ('dermatologia', 'Dermatología'),
+    ])
+
+    doctor = models.ForeignKey('Doctor', null=True, blank=True, on_delete=models.SET_NULL)
+    fecha = models.DateField()
+    hora = models.TimeField()
+    notas = models.TextField(blank=True, null=True)
+    estado = models.CharField(
+        max_length=20,
+        choices=[
+            ("pendiente", "Pendiente"),
+            ("confirmada", "Confirmada"),
+            ("rechazada", "Rechazada")
+        ],
+        default="pendiente"
+    )
+
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.especialidad} ({self.estado})"
 
 
 
