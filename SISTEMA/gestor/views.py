@@ -171,7 +171,7 @@ def eliminar_doctor(request, id):
 # ======================================================
 # =================== CRUD CITAS =======================
 # ======================================================
-@login_required
+#@login_required
 def listar_citas(request):
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/citas_list.html', {'citas': citas})
