@@ -14,12 +14,20 @@ from .forms import *
 # --- PÁGINAS PRINCIPALES ---
 def inicio(request):
     doctores = Doctor.objects.all()
+    print("Función inicio-llamar doctores, llamada exitosamente.")
     return render(request, 'gestor/index.html', {'doctores': doctores})
 
 def test(request):
     doctores = Doctor.objects.all()
-    return render(request, 'gestor/test.html', {'doctores': doctores})
+    citas = CitaMedica.objects.all()
+    return render(request, 'gestor/test.html', {'doctores': doctores}, {'citas': citas})
 
+'''
+def portalPacientes(request):
+    doctores = Doctor.objects.all()
+    citas = CitaMedica.objects.all()
+    return render(request, 'gestor/portal_pacientes.html', {'doctores': doctores}, {'citas': citas})
+'''
 
 # Permite logout por GET
 LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
@@ -173,7 +181,9 @@ def eliminar_doctor(request, id):
 # ======================================================
 #@login_required
 def listar_citas(request):
+    print("Función listar_citas llamada exitosamente.")
     citas = CitaMedica.objects.all()
+    print("Citas encontradas:", citas)
     return render(request, 'gestor/citas_list.html', {'citas': citas})
 
 @login_required

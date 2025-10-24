@@ -109,7 +109,7 @@ class Funcionario(Usuario):
 
 # -- OTRAS --
 class CitaMedica(models.Model):
-    id_cita = models.CharField(max_length=20, unique=True)
+    id_cita = models.CharField(max_length=20, unique=True, primary_key=True)
     paciente = models.ForeignKey("Paciente", on_delete=models.CASCADE)
     doctor = models.ForeignKey("Doctor", on_delete=models.CASCADE)
     fecha_hora = models.DateTimeField()

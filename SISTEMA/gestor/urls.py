@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='inicio'), name='logout'),
 
     path('test/', views.test, name='test'),
+    #path('portal_pacientes', views.portalPacientes, name='citas'),
 
     # ======================================================
     # =================== PACIENTES ========================
@@ -36,6 +37,7 @@ urlpatterns = [
     # ======================================================
     # =================== CITAS MÉDICAS ====================
     # ======================================================
+    #path('test/', views.listar_citas, name='listar_citas'),
     path('citas/', views.listar_citas, name='listar_citas'),
     path('citas/crear/', views.crear_cita, name='crear_cita'),
     path('crear_reserva/', views.crear_reserva, name='crear_reserva'),
