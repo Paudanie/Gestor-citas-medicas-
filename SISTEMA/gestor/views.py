@@ -13,7 +13,9 @@ from .forms import *
 
 # --- PÁGINAS PRINCIPALES ---
 def inicio(request):
-    return render(request, 'gestor/index.html')
+    doctores = Doctor.objects.all()
+    return render(request, 'gestor/index.html', {'doctores': doctores})
+
 
 # Permite logout por GET
 LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
@@ -122,7 +124,7 @@ def eliminar_paciente(request, id):
 # ======================================================
 # =================== CRUD DOCTORES ====================
 # ======================================================
-@login_required
+#@login_required
 def listar_doctores(request):
     doctores = Doctor.objects.all()
     return render(request, 'gestor/doctores_list.html', {'doctores': doctores})
