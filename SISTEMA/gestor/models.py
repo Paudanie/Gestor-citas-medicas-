@@ -58,6 +58,10 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
         verbose_name='user permissions',
     )
 
+    '''
+    def __str__(self):
+        return f"{self.id_usuario} - {self.first_name} {self.last_name}"
+    '''
 
 class Paciente(Usuario):
     enfermedades = models.ManyToManyField(Enfermedad, blank=True)

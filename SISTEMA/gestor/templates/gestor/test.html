@@ -1,0 +1,9 @@
+<div class="text-center">
+    {% for doctor in doctores %}
+        <option value="{{ doctor.id_usuario }}">{{ doctor.id_usuario }} - {{ doctor.first_name }} — {{ doctor.especialidad }}</option>
+    {% empty %}
+        <option value="">No hay doctores disponibles</option>
+    {% endfor %}
+
+
+</div>

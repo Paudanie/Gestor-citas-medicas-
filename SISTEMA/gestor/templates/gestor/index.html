@@ -524,7 +524,7 @@
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-primary focus:border-transparent">
                                     <option value="">Seleccione un doctor</option>
                                     {% for doctor in doctores %}
-                                        <option value="{{ doctor.id }}">{{ doctor.nombre }} — {{ doctor.especialidad }}</option>
+                                        <option value="{{ doctor.id }}">{{ doctor.first_name }} {{doctor.last_name}} — {{ doctor.especialidad }}</option>
                                     {% empty %}
                                         <option value="">No hay doctores disponibles</option>
                                     {% endfor %}

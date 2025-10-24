@@ -16,6 +16,10 @@ def inicio(request):
     doctores = Doctor.objects.all()
     return render(request, 'gestor/index.html', {'doctores': doctores})
 
+def test(request):
+    doctores = Doctor.objects.all()
+    return render(request, 'gestor/test.html', {'doctores': doctores})
+
 
 # Permite logout por GET
 LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
