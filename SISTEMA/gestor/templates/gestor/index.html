@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -44,7 +45,7 @@
                     <a href="#especialidades" class="text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
                     <a href="#doctores" class="text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
                     <a href="#contacto" class="text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
-                    <a href="login.html" class="text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                    <a href="login" class="text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
                     <button onclick="openReservaModal()" class="bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg shadow-lg">
                         Reservar Cita
                     </button>
@@ -64,7 +65,7 @@
                 <a href="#especialidades" class="block text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
                 <a href="#doctores" class="block text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
                 <a href="#contacto" class="block text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
-                <a href="login.html" class="block text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                <a href="{% url 'login' %}" class="block text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
                 <button onclick="openReservaModal()" class="block bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-center text-lg shadow-lg">
                     Reservar Cita
                 </button>
@@ -87,7 +88,7 @@
                         <button onclick="openReservaModal()" class="bg-medical-primary text-white px-8 py-4 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg text-center shadow-lg">
                             Reservar Cita Ahora
                         </button>
-                        <a href="registro.html" class="bg-white text-medical-primary px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors font-medium text-lg text-center border-2 border-medical-primary">
+                        <a href="{% url 'registro_usuario'%}" class="bg-white text-medical-primary px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors font-medium text-lg text-center border-2 border-medical-primary">
                             Crear Cuenta
                         </a>
                     </div>
@@ -107,7 +108,7 @@
                     </div>
                 </div>
                 <div class="hidden lg:block">
-                    <img src="imagenes/logo2.png" height="500" width="600" alt="Clínica MediCare" class="rounded-lg shadow-2xl">
+                    <img src="{% static 'gestor/imagenes/logo2.png' %}" height="500" width="600" alt="Clínica MediCare" class="rounded-lg shadow-2xl">
                 </div>
             </div>
         </div>
@@ -381,9 +382,9 @@
                 <div>
                     <h3 class="font-semibold mb-4">Para Pacientes</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="login.html" class="hover:text-white transition-colors">Iniciar Sesión</a></li>
-                        <li><a href="registro.html" class="hover:text-white transition-colors">Crear Cuenta</a></li>
-                        <li><a href="mis-citas.html" class="hover:text-white transition-colors">Mis Citas</a></li>
+                        <li><a href="{% url 'login' %}" class="hover:text-white transition-colors">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'registro_usuario' %}" class="hover:text-white transition-colors">Crear Cuenta</a></li>
+                        <li><a href="{% url 'login' %}" class="hover:text-white transition-colors">Mis Citas</a></li>
                     </ul>
                 </div>
                 

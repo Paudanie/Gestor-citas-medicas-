@@ -71,9 +71,7 @@ TEMPLATES = [
 ]
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'gestor' / 'templates' / 'gestor' / 'imagenes',
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 WSGI_APPLICATION = 'SISTEMA.wsgi.application'
 

@@ -126,17 +126,18 @@ class CitaMedica(models.Model):
 
 
 class Receta(models.Model):
-    id_receta = models.CharField(unique=True)
+    id_receta = models.CharField(max_length=20, unique=True)
     doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
     paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE)
-    cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE) 
+    cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE)
     tratamiento = models.ManyToManyField(Tratamiento)
     indicaciones_extra = models.CharField(max_length=200)
     fecha_emision = models.DateField()
     vigente_hasta = models.DateField()
 
     def __str__(self):
-        return self.nombre
+        return f"Receta {self.id_receta} - {self.paciente}"
+
 
 
 class HistorialAsistencia(models.Model):

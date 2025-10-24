@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
-from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import Group
 from .models import *
 from .forms import *
 
@@ -10,14 +11,41 @@ from .forms import *
 def inicio(request):
     return render(request, 'gestor/index.html')
 
+# Permite logout por GET
+LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
+
+
 def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            
+            # Redirigir según el grupo o tipo de usuario
+            if user.groups.filter(name='Doctores').exists():
+                return redirect('portal_doctores')  # debe coincidir con name en urls.py
+            elif user.groups.filter(name='Pacientes').exists():
+                return redirect('portal_pacientes')
+            else:
+                return redirect('inicio')  # fallback si no pertenece a ningún grupo
+        else:
+            messages.error(request, "Credenciales incorrectas")
+            return render(request, 'gestor/login.html')
+
     return render(request, 'gestor/login.html')
 
 def reservas(request):
     return render(request, 'gestor/reservar-cita.html')
 
 def portal_pacientes(request):
-    return render(request, 'gestor/portal-pacientes.html')
+    return render(request, 'gestor/portal_pacientes.html')
+
+def portal_doctores(request):
+    return render(request, 'gestor/portal_doctores.html')
 
 
 # --- REGISTRO DE USUARIOS ---
@@ -37,11 +65,11 @@ def registro_usuario(request):
                 Paciente.objects.create(usuario=usuario)
 
             messages.success(request, 'Usuario registrado correctamente.')
-            return redirect('inicio')
+            return redirect('login')
     else:
         form = RegistroForm()
 
-    return render(request, 'registro.html', {'form': form})
+    return render(request, 'gestor/registro.html', {'form': form})
 
 
 # ======================================================
