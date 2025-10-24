@@ -82,10 +82,10 @@ WSGI_APPLICATION = 'SISTEMA.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gestormedico',
-        'USER': 'Paula',
-        'PASSWORD': 'Violetas',
-        'HOST': 'gestormedico.ch0qwcy8kdyd.us-east-1.rds.amazonaws.com',
+        'NAME': 'gestor-medico-mysql-2',
+        'USER': 'paula',
+        'PASSWORD': 'pauliwis',
+        'HOST': 'gestormedico-mysql-2.ch0qwcy8kdyd.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
