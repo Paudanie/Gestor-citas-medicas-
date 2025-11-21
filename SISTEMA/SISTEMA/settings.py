@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'gestormedico',
         'USER': 'paula',
         'PASSWORD': 'pauliwis',
-        'HOST': 'gestormedico-mysql-2.ch0qwcy8kdyd.us-east-1.rds.amazonaws.com',
+        'HOST': 'gestormedico-db.c5qq2woakzus.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
