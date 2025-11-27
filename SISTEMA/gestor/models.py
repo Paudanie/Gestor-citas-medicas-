@@ -37,7 +37,7 @@ class Tratamiento(models.Model):
 # --- CLASS MÁS IMPORTANTES ---
 # -- PERSONAS --
 class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usuario, la contraseña, y el manejo seguro de estos
-    id_usuario = models.CharField(max_length=12, unique=True)
+    rut = models.CharField(unique=True, primary_key=True, default="11.111.111-1", max_length=12)
     fecha_nac = models.DateField()
     telefono = models.IntegerField()
     direccion = models.CharField(max_length=100)
@@ -60,7 +60,7 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
 
     '''
     def __str__(self):
-        return f"{self.id_usuario} - {self.first_name} {self.last_name}"
+        return f"{self.rut} - {self.first_name} {self.last_name}"
     '''
 
 class Paciente(Usuario):
@@ -68,7 +68,7 @@ class Paciente(Usuario):
 #    tratamiento_actual = ¿Le pongo una lista de las recetas que tiene? Es que el doctor ya puede filtrarlas dentro de las mismas recetas, por la id del paciente...
     
     def __str__(self):
-        return f"{self.id_usuario} - {self.first_name} {self.last_name}"
+        return f"{self.rut} - {self.first_name} {self.last_name}"
     
     def tratamientos_vigentes(self):
         #Devuelve los tratamientos de las recetas aún vigentes
