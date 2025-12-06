@@ -40,8 +40,8 @@ class RegistroForm(UserCreationForm):
 
     class Meta:
         model = Usuario
-        fields = ['username', 'password1', 'password2', 'fecha_nac', 'telefono', 'direccion', 'discapacidades']
-        # username, password1 y password2 son atributos que debes poner siempre, porque viene en el Auth propio de Django, que es el que estamos usando para la creación de usuarios
+        fields = ['rut', 'password1', 'password2', 'fecha_nac', 'telefono', 'direccion', 'discapacidades']
+        # rut, password1 y password2 son atributos que debes poner siempre, porque viene en el Auth propio de Django, que es el que estamos usando para la creación de usuarios
 
 
 # --- PERFILES ---

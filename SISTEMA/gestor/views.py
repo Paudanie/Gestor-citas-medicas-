@@ -35,10 +35,10 @@ LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        rut = request.POST.get('rut')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, rut=rut, password=password)
 
         if user is not None:
             auth_login(request, user)
@@ -259,14 +259,14 @@ def crear_reserva(request):
 
         # Crear un paciente básico (solo si no existe uno con el mismo email)
         paciente, created = Paciente.objects.get_or_create(
-            username=email,  # necesario para AbstractUser
+            rut=email,  # necesario para AbstractUser
             defaults={
                 'first_name': nombre,
                 'email': email,
                 'telefono': telefono,
                 'fecha_nac': fecha_nac,
                 'direccion': 'No especificada',
-                'id_usuario': f'P{telefono}',  # generar ID básico
+                #'id_usuario': f'P{telefono}',  # generar ID básico
             }
         )
 

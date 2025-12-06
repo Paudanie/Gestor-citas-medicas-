@@ -87,7 +87,11 @@ DATABASES = {
         'PASSWORD': 'pauliwis',
         'HOST': 'gestormedico-db.c5qq2woakzus.us-east-1.rds.amazonaws.com',
         'PORT': '3306',
+    },
+    'options': {
+        'sql_mode': 'STRICT_TRANS_TABLES'
     }
+
 }
 
 
@@ -109,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#AUTH_USER_MODEL = 'gestor.Usuario'
+AUTH_USER_MODEL = 'gestor.Usuario'
 
 
 # Internationalization

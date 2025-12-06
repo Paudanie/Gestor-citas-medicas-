@@ -101,7 +101,7 @@
             {% csrf_token %}
             
             <!-- Hidden field for paciente (auto-filled from logged user) -->
-            <input type="hidden" name="paciente" value="{{ user.id_usuario }}">
+            <input type="hidden" name="paciente" value="{{ user.rut }}">
 
             <!-- Step 1: Especialidad -->
             <div id="step1" class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
