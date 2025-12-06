@@ -57,13 +57,16 @@ def login_view(request):
     return render(request, 'gestor/login.html')
 
 def reservas(request):
-    return render(request, 'gestor/reservar-cita.html')
+    citas = CitaMedica.objects.all()
+    return render(request, 'gestor/reservar-cita.html', {'citas': citas})
 
 def portal_pacientes(request):
-    return render(request, 'gestor/portal_pacientes.html')
+    citas = CitaMedica.objects.all()
+    return render(request,'gestor/portal_pacientes.html', {'citas': citas})
 
 def portal_doctores(request):
-    return render(request, 'gestor/portal_doctores.html')
+    citas = CitaMedica.objects.all()
+    return render(request, 'gestor/portal_doctores.html', {'citas': citas})
 
 
 # --- REGISTRO DE USUARIOS ---
@@ -184,6 +187,7 @@ def listar_citas(request):
     print("Función listar_citas llamada exitosamente.")
     citas = CitaMedica.objects.all()
     print("Citas encontradas:", citas)
+    print("Estoy justo antes del render => citas_list.html")
     return render(request, 'gestor/citas_list.html', {'citas': citas})
 
 @login_required
@@ -243,6 +247,14 @@ def guardar_solicitud_cita(request):
     return JsonResponse({"success": False, "message": "Método no permitido."})
 
 def crear_reserva(request):
+    rut = request.POST.get("rut", "").strip()
+    if not rut:
+        return JsonResponse({"success": False, "message": "Debe ingresar el RUT"})
+    
+    email = request.POST.get("email", "").strip()
+    if not email:
+        return JsonResponse({"success": False, "message": "Debe ingresar el Email"})
+
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         email = request.POST.get('email')
@@ -259,7 +271,7 @@ def crear_reserva(request):
 
         # Crear un paciente básico (solo si no existe uno con el mismo email)
         paciente, created = Paciente.objects.get_or_create(
-            rut=email,  # necesario para AbstractUser
+            rut=rut,
             defaults={
                 'first_name': nombre,
                 'email': email,
@@ -326,3 +338,13 @@ def eliminar_receta(request, id):
         messages.success(request, 'Receta eliminada correctamente.')
         return redirect('listar_recetas')
     return render(request, 'gestor/receta_confirm_delete.html', {'receta': receta})
+
+
+
+# SOLICITUDES de citas médicas
+
+def listar_solicitudes(request):
+    print("Función listar_solicitudes llamada exitosamente.")
+    solicitudes = SolicitudCita.objects.all()
+    print("Solicitudes encontradas:", solicitudes)
+    return render(request, 'gestor/solicitudes_list.html', {'solicitudes': solicitudes})

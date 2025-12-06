@@ -52,6 +52,11 @@ urlpatterns = [
     path('recetas/crear/', views.crear_receta, name='crear_receta'),
     path('recetas/editar/<int:id>/', views.editar_receta, name='editar_receta'),
     path('recetas/eliminar/<int:id>/', views.eliminar_receta, name='eliminar_receta'),
+    # ======================================================
+    # ================= SOLICITUDES ========================
+    # ======================================================
+    path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),
+    
 ]
 
 

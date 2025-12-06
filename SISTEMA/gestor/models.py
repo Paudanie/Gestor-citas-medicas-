@@ -37,8 +37,11 @@ class Tratamiento(models.Model):
 # --- CLASS MÁS IMPORTANTES ---
 # -- PERSONAS --
 class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usuario, la contraseña, y el manejo seguro de estos
-    #username = None # Borramos el campo username que viene por defecto en django
-    rut = models.CharField(unique=True, primary_key=True, max_length=12) #Reemplazamos dicha clave primaria por el RUT.
+    username = None  # anular campo username por completo
+    rut = models.CharField(unique=True, primary_key=True, max_length=12)
+    USERNAME_FIELD = 'rut'
+    REQUIRED_FIELDS = []  # importantísimo
+
     fecha_nac = models.DateField()
     telefono = models.IntegerField()
     direccion = models.CharField(max_length=100)
@@ -111,8 +114,8 @@ class Funcionario(Usuario):
 # -- OTRAS --
 class CitaMedica(models.Model):
     id_cita = models.CharField(max_length=20, unique=True, primary_key=True)
-    paciente = models.CharField(max_length=12)
-    #paciente = models.ForeignKey("Paciente", on_delete=models.CASCADE)
+    #paciente = models.CharField(max_length=12)
+    paciente = models.ForeignKey("Paciente", on_delete=models.CASCADE)
     doctor = models.ForeignKey("Doctor", on_delete=models.CASCADE)
     fecha_hora = models.DateTimeField()
     estado = models.CharField(
