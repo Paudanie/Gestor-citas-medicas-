@@ -119,6 +119,7 @@ AUTHENTICATION_BACKENDS = [
     'gestor.auth_backends.RUTBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+LOGIN_URL = '/login/'
 
 
 

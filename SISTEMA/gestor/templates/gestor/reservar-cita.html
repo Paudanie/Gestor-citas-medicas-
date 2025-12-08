@@ -45,7 +45,7 @@
 
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2">
-                        <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Paciente">
+                        <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Usuario">
                         <span class="text-sm font-medium text-gray-700">{{ user.get_full_name }}</span>
                     </div>
                     <button onclick="logout()" class="text-gray-600 hover:text-medical-primary">
@@ -82,7 +82,7 @@
                     <div id="step2-indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-semibold">
                         2
                     </div>
-                    <span id="step2-text" class="ml-2 text-sm font-medium text-gray-600">Doctor</span>
+                    <span id="step2-text" class="ml-2 text-sm font-medium text-gray-600">Usuario</span>
                 </div>
                 <div class="flex-1 h-1 mx-4 bg-gray-200">
                     <div id="progress2" class="h-full bg-medical-primary transition-all duration-300" style="width: 0%"></div>
@@ -108,7 +108,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 mb-4">Selecciona una Especialidad</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Especialidades dinámicas desde Doctor.especialidad -->
+                    <!-- Especialidades dinámicas desde Usuario.especialidad -->
                     <label class="relative flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-medical-primary transition-colors">
                         <input type="radio" name="especialidad" value="Cardiología" class="sr-only peer" required>
                         <div class="flex items-center w-full">
@@ -181,12 +181,12 @@
                 </div>
             </div>
 
-            <!-- Step 2: Doctor (ForeignKey a Doctor) -->
+            <!-- Step 2: Usuario (ForeignKey a Usuario) -->
             <div id="step2" class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hidden">
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Selecciona un Doctor</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Selecciona un Usuario</h3>
                 
                 <div class="space-y-4" id="doctorsList" >
-                    <!-- Doctores filtrados por especialidad seleccionada -->
+                    <!-- Usuarioes filtrados por especialidad seleccionada -->
                 </div>
 
                 <div class="flex justify-between mt-6">
@@ -279,7 +279,7 @@
                     <span class="font-medium text-gray-900" id="summary-especialidad">-</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Doctor:</span>
+                    <span class="text-gray-600">Usuario:</span>
                     <span class="font-medium text-gray-900" id="summary-doctor">-</span>
                 </div>
                 <div class="flex justify-between">
@@ -360,7 +360,7 @@
                     alert('Por favor selecciona una especialidad');
                     return;
                 }
-                loadDoctors(especialidad.value);
+                loadUsuarios(especialidad.value);
             } else if (step === 3) {
                 const doctor = document.querySelector('input[name="doctor"]:checked');
                 if (!doctor) {
@@ -418,7 +418,7 @@
             document.getElementById('progress2').style.width = step >= 3 ? '100%' : '0%';
         }
 
-        function loadDoctors(especialidad) {
+        function loadUsuarios(especialidad) {
             const doctoresList = document.getElementById('doctorsList');
             const doctores = doctoresPorEspecialidad[especialidad] || [];
             

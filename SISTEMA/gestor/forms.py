@@ -33,32 +33,41 @@ class TratamientoForm(forms.ModelForm):
 # ---- PERSONAS ----
 # --- USUARIO ---
 class RegistroForm(UserCreationForm):
-    codigo_seguridad = forms.CharField(required=False, help_text="Solo para crear funcionarios o doctores")
-    # El código de seguridad se ingresa al crear un nuevo usuario. Se ingresa manualmente (ej: "codigo_doctor" o "tu eres el doc", cualquier cosa).
-    # Sirve para diferenciar el tipo de usuario que será: paciente(por defcto), doctor o funcionario.
-    # De ese modo, un nuevo usuario no puede seleccionar "soy doctor", porque no se sabe el código secreto que hay que ingresar.
+    #codigo_seguridad = forms.CharField(required=False)
 
     class Meta:
         model = Usuario
-        fields = ['rut', 'password1', 'password2', 'fecha_nac', 'telefono', 'direccion', 'discapacidades']
-        # rut, password1 y password2 son atributos que debes poner siempre, porque viene en el Auth propio de Django, que es el que estamos usando para la creación de usuarios
+        fields = [
+            'rut',
+            'first_name',
+            'last_name',
+            'email',
+            'password1',
+            'password2',
+            'fecha_nac',
+            'telefono',
+            'direccion',
+            'discapacidades',
+            'enfermedades',
+        ]
 
 
 # --- PERFILES ---
 class DoctorForm(forms.ModelForm):
     class Meta:
-        model = Doctor
+        model = Usuario
         fields = ['especialidad']
 
 class PacienteForm(forms.ModelForm):
     class Meta:
-        model = Paciente
+        model = Usuario
         fields = ['enfermedades']
 
-class FuncionarioForm(forms.ModelForm):
+'''class FuncionarioForm(forms.ModelForm):
     class Meta:
-        model = Funcionario
-        fields = ['rol_trabajo']
+        model = Usuario
+        #fields = ['rol_trabajo']
+'''
 
 
 # --- MODELOS PRINCIPALES ---

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.http import JsonResponse
 from .models import SolicitudCita
-from .models import CitaMedica, Paciente, Doctor
+from .models import CitaMedica, Usuario, Usuario
 from datetime import datetime
 from .models import *
 from .forms import *
@@ -13,21 +13,16 @@ from .forms import *
 
 # --- PÁGINAS PRINCIPALES ---
 def inicio(request):
-    doctores = Doctor.objects.all()
+    doctores = Usuario.objects.all()
     print("Función inicio-llamar doctores, llamada exitosamente.")
     return render(request, 'gestor/index.html', {'doctores': doctores})
 
 def test(request):
-    doctores = Doctor.objects.all()
+    doctores = Usuario.objects.all()
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/test.html', {'doctores': doctores}, {'citas': citas})
 
-'''
-def portalPacientes(request):
-    doctores = Doctor.objects.all()
-    citas = CitaMedica.objects.all()
-    return render(request, 'gestor/portal_pacientes.html', {'doctores': doctores}, {'citas': citas})
-'''
+
 
 # Permite logout por GET
 LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
@@ -37,36 +32,39 @@ def login_view(request):
     if request.method == 'POST':
         rut = request.POST.get('rut')
         password = request.POST.get('password')
+        print("AUTENTICANDO:", rut, password)  # <--- agrega esto
 
-        user = authenticate(request, username=rut, password=password)
+        user = authenticate(request, rut=rut, password=password)
+        print("RESULTADO AUTH:", user)  # <--- agrega esto
 
         if user is not None:
             auth_login(request, user)
-
+            print("LOGUEADO OK:", request.user)  # <--- agrega esto
+            print("GRUPOS:", list(request.user.groups.values_list('name', flat=True)))
             if user.groups.filter(name='Doctores').exists():
-                doctores = Doctor.objects.all()
                 return redirect('portal_doctores')
+
             elif user.groups.filter(name='Pacientes').exists():
                 return redirect('portal_pacientes')
-            return redirect('inicio')
+
+            #return redirect('inicio')
 
         messages.error(request, "Credenciales incorrectas")
 
     return render(request, 'gestor/login.html')
 
-
 def reservas(request):
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/reservar-cita.html', {'citas': citas})
+
 
 def portal_pacientes(request):
     citas = CitaMedica.objects.all()
     return render(request,'gestor/portal_pacientes.html', {'citas': citas})
 
-
 @login_required
 def portal_doctores(request):
-    doctores = Doctor.objects.all()
+    doctores = Usuario.objects.all()
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/portal_doctores.html', {'doctores': doctores, 'citas': citas})
 
@@ -77,16 +75,13 @@ def registro_usuario(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
-            usuario = form.save()
-            codigo = form.cleaned_data.get('codigo_seguridad')
+            usuario = form.save()  # UserCreationForm ya guarda el password con hash
 
-            # Crear perfil según el código
-            if codigo == 'codigo_funcionario':
-                Funcionario.objects.create(usuario=usuario, rol_trabajo=1)
-            elif codigo == 'codigo_doctor':
-                Doctor.objects.create(usuario=usuario, especialidad='General')
-            else:
-                Paciente.objects.create(usuario=usuario)
+            # Si quieres permitir crear doctores con código:
+            codigo = form.cleaned_data.get('codigo_seguridad')
+            if codigo == 'codigo_doctor':
+                usuario.especialidad = "General"
+                usuario.save()
 
             messages.success(request, 'Usuario registrado correctamente.')
             return redirect('login')
@@ -96,45 +91,46 @@ def registro_usuario(request):
     return render(request, 'gestor/registro.html', {'form': form})
 
 
+
 # ======================================================
 # =================== CRUD PACIENTES ===================
 # ======================================================
 @login_required
 def listar_pacientes(request):
-    pacientes = Paciente.objects.all()
+    pacientes = Usuario.objects.all()
     return render(request, 'gestor/pacientes_list.html', {'pacientes': pacientes})
 
 @login_required
 def crear_paciente(request):
     if request.method == 'POST':
-        form = PacienteForm(request.POST)
+        form = UsuarioForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Paciente creado correctamente.')
+            messages.success(request, 'Usuario creado correctamente.')
             return redirect('listar_pacientes')
     else:
-        form = PacienteForm()
+        form = UsuarioForm()
     return render(request, 'gestor/paciente_form.html', {'form': form})
 
 @login_required
 def editar_paciente(request, id):
-    paciente = get_object_or_404(Paciente, id=id)
+    paciente = get_object_or_404(Usuario, id=id)
     if request.method == 'POST':
-        form = PacienteForm(request.POST, instance=paciente)
+        form = UsuarioForm(request.POST, instance=paciente)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Paciente actualizado correctamente.')
+            messages.success(request, 'Usuario actualizado correctamente.')
             return redirect('listar_pacientes')
     else:
-        form = PacienteForm(instance=paciente)
+        form = UsuarioForm(instance=paciente)
     return render(request, 'gestor/paciente_form.html', {'form': form})
 
 @login_required
 def eliminar_paciente(request, id):
-    paciente = get_object_or_404(Paciente, id=id)
+    paciente = get_object_or_404(Usuario, id=id)
     if request.method == 'POST':
         paciente.delete()
-        messages.success(request, 'Paciente eliminado correctamente.')
+        messages.success(request, 'Usuario eliminado correctamente.')
         return redirect('listar_pacientes')
     return render(request, 'gestor/paciente_confirm_delete.html', {'paciente': paciente})
 
@@ -144,40 +140,40 @@ def eliminar_paciente(request, id):
 # ======================================================
 #@login_required
 def listar_doctores(request):
-    doctores = Doctor.objects.all()
+    doctores = Usuario.objects.all()
     return render(request, 'gestor/doctores_list.html', {'doctores': doctores})
 
 @login_required
 def crear_doctor(request):
     if request.method == 'POST':
-        form = DoctorForm(request.POST)
+        form = UsuarioForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Doctor creado correctamente.')
+            messages.success(request, 'Usuario creado correctamente.')
             return redirect('listar_doctores')
     else:
-        form = DoctorForm()
+        form = UsuarioForm()
     return render(request, 'gestor/doctor_form.html', {'form': form})
 
 @login_required
 def editar_doctor(request, id):
-    doctor = get_object_or_404(Doctor, id=id)
+    doctor = get_object_or_404(Usuario, id=id)
     if request.method == 'POST':
-        form = DoctorForm(request.POST, instance=doctor)
+        form = UsuarioForm(request.POST, instance=doctor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Doctor actualizado correctamente.')
+            messages.success(request, 'Usuario actualizado correctamente.')
             return redirect('listar_doctores')
     else:
-        form = DoctorForm(instance=doctor)
+        form = UsuarioForm(instance=doctor)
     return render(request, 'gestor/doctor_form.html', {'form': form})
 
 @login_required
 def eliminar_doctor(request, id):
-    doctor = get_object_or_404(Doctor, id=id)
+    doctor = get_object_or_404(Usuario, id=id)
     if request.method == 'POST':
         doctor.delete()
-        messages.success(request, 'Doctor eliminado correctamente.')
+        messages.success(request, 'Usuario eliminado correctamente.')
         return redirect('listar_doctores')
     return render(request, 'gestor/doctor_confirm_delete.html', {'doctor': doctor})
 
@@ -249,6 +245,19 @@ def guardar_solicitud_cita(request):
     
     return JsonResponse({"success": False, "message": "Método no permitido."})
 
+
+@login_required
+def confirmar_cita(request, cita_id):
+    if request.method == 'POST':
+        cita = CitaMedica.objects.get(id=cita_id)
+        cita.estado = "Confirmada"
+        cita.save()
+        return JsonResponse({"ok": True})
+    return JsonResponse({"error": "invalid method"}, status=405)
+
+
+
+
 def crear_reserva(request):
     rut = request.POST.get("rut", "").strip()
     if not rut:
@@ -270,10 +279,10 @@ def crear_reserva(request):
         notas = request.POST.get('notas')
 
         # Buscar doctor (si el usuario seleccionó uno)
-        doctor = Doctor.objects.filter(id_usuario=doctor_id).first() if doctor_id else None
+        doctor = Usuario.objects.filter(id_usuario=doctor_id).first() if doctor_id else None
 
         # Crear un paciente básico (solo si no existe uno con el mismo email)
-        paciente, created = Paciente.objects.get_or_create(
+        paciente, created = Usuario.objects.get_or_create(
             rut=rut,
             defaults={
                 'first_name': nombre,
@@ -289,7 +298,7 @@ def crear_reserva(request):
         CitaMedica.objects.create(
             id_cita=f"CITA_{datetime.now().strftime('%Y%m%d%H%M%S')}",
             paciente=paciente,
-            doctor=doctor if doctor else Doctor.objects.first(),
+            doctor=doctor if doctor else Usuario.objects.first(),
             fecha_hora=f"{fecha} {hora}",
             estado='pendiente',
             notas=notas
