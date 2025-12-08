@@ -62,6 +62,15 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
         verbose_name='user permissions',
     )
 
+    def save(self, *args, **kwargs):
+        if self.pk is None and self.password:
+            # Si ya viene con password plano, hashearlo
+            from django.contrib.auth.hashers import make_password
+            self.password = make_password(self.password)
+
+        super().save(*args, **kwargs)
+
+
     '''
     def __str__(self):
         return f"{self.rut} - {self.first_name} {self.last_name}"

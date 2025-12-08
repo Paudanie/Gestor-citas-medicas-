@@ -49,11 +49,19 @@
                         <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Paciente">
                         <span class="text-sm font-medium text-gray-700">{{ user.get_full_name }}</span>
                     </div>
-                    <a href="{% url 'inicio' %}" class="text-gray-600 hover:text-medical-primary">Cerrar sesión</a>
+                    
+                    {% if request.user.is_authenticated %}
+                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Cerrar sesión</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}">Iniciar sesión</a>
+                    {% endif %}
+
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
-                    </button>
                 </div>
             </div>
         </div>

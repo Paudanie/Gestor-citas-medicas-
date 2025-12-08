@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi sitio{% endblock %}</title>
+    {% load static %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            primary: '#2563eb',
+                            secondary: '#1e40af',
+                            accent: '#06b6d4',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        async function handleReservaSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const response = await fetch("{% url 'guardar_solicitud' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("✅ Solicitud enviada correctamente. Nos contactaremos pronto para confirmar su cita.");
+                closeReservaModal();
+                form.reset();
+            } else {
+                alert("❌ " + data.message);
+            }
+        }
+
+        // Función para obtener CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+</script>
+
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-10 w-10 bg-medical-primary rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-2xl font-bold text-gray-900">MediCare</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#servicios" class="text-gray-700 hover:text-medical-primary transition-colors">Servicios</a>
+                    <a href="#especialidades" class="text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
+                    <a href="#doctores" class="text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
+                    <a href="#contacto" class="text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
+                    <a href="login" class="text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                    <button onclick="openReservaModal()" class="bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg shadow-lg">
+                        Reservar Cita
+                    </button>
+                </div>
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200">
+            <div class="px-4 py-3 space-y-3">
+                <a href="#servicios" class="block text-gray-700 hover:text-medical-primary transition-colors">Servicios</a>
+                <a href="#especialidades" class="block text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
+                <a href="#doctores" class="block text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
+                <a href="#contacto" class="block text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
+                <a href="{% url 'login' %}" class="block text-medical-primary hover:text-medical-secondary transition-colors font-medium">Iniciar Sesión</a>
+                <button onclick="openReservaModal()" class="block bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-center text-lg shadow-lg">
+                    Reservar Cita
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+    {% block content %}
+    {% endblock %}
+    
+</body>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="h-10 w-10 bg-medical-primary rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-xl font-bold">MediCare</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Sistema integral de gestión médica para tu bienestar.</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Enlaces Rápidos</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#servicios" class="hover:text-white transition-colors">Servicios</a></li>
+                        <li><a href="#especialidades" class="hover:text-white transition-colors">Especialidades</a></li>
+                        <li><a href="#doctores" class="hover:text-white transition-colors">Doctores</a></li>
+                        <li><a href="#contacto" class="hover:text-white transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Para Pacientes</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="{% url 'login' %}" class="hover:text-white transition-colors">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'registro_usuario' %}" class="hover:text-white transition-colors">Crear Cuenta</a></li>
+                        <li><a href="{% url 'login' %}" class="hover:text-white transition-colors">Mis Citas</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Horario</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>Lunes - Viernes: 8:00 - 20:00</li>
+                        <li>Sábados: 9:00 - 14:00</li>
+                        <li>Domingos: Cerrado</li>
+                        <li class="text-medical-accent">Urgencias 24/7</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2025 MediCare. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</html>

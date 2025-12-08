@@ -38,23 +38,22 @@ def login_view(request):
         rut = request.POST.get('rut')
         password = request.POST.get('password')
 
-        user = authenticate(request, rut=rut, password=password)
+        user = authenticate(request, username=rut, password=password)
 
         if user is not None:
             auth_login(request, user)
-            
-            # Redirigir según el grupo o tipo de usuario
+
             if user.groups.filter(name='Doctores').exists():
-                return redirect('portal_doctores')  # debe coincidir con name en urls.py
+                doctores = Doctor.objects.all()
+                return redirect('portal_doctores')
             elif user.groups.filter(name='Pacientes').exists():
                 return redirect('portal_pacientes')
-            else:
-                return redirect('inicio')  # fallback si no pertenece a ningún grupo
-        else:
-            messages.error(request, "Credenciales incorrectas")
-            return render(request, 'gestor/login.html')
+            return redirect('inicio')
+
+        messages.error(request, "Credenciales incorrectas")
 
     return render(request, 'gestor/login.html')
+
 
 def reservas(request):
     citas = CitaMedica.objects.all()
@@ -64,9 +63,13 @@ def portal_pacientes(request):
     citas = CitaMedica.objects.all()
     return render(request,'gestor/portal_pacientes.html', {'citas': citas})
 
+
+@login_required
 def portal_doctores(request):
+    doctores = Doctor.objects.all()
     citas = CitaMedica.objects.all()
-    return render(request, 'gestor/portal_doctores.html', {'citas': citas})
+    return render(request, 'gestor/portal_doctores.html', {'doctores': doctores, 'citas': citas})
+
 
 
 # --- REGISTRO DE USUARIOS ---

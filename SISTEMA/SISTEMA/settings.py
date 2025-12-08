@@ -114,6 +114,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'gestor.Usuario'
+AUTHENTICATION_BACKENDS = [
+    #'gestor.backends.RutBackend',
+    'gestor.auth_backends.RUTBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 
 # Internationalization

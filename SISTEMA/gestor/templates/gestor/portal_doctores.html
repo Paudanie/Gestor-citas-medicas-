@@ -48,8 +48,10 @@
                     <div class="flex items-center space-x-2">
                         <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Doctor">
                         <div class="text-right">
-                            <p class="text-sm font-medium text-gray-700">{{ user.get_full_name }}</p>
-                            <p class="text-xs text-gray-500">{{ user.especialidad }}</p>
+                            {{% for doctor in doctores %}}
+                            <p class="text-sm font-medium text-gray-700">{{ doctor.get_full_name }}</p>
+                            <p class="text-xs text-gray-500">{{ doctor.especialidad }}</p>
+                            {{%endfor%}}
                         </div>
                     </div>
                     <a href="{% url 'inicio' %}" class="text-gray-600 hover:text-medical-primary">Cerrar sesión</a>
