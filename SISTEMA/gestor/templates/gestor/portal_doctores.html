@@ -41,25 +41,10 @@
                 <nav class="hidden md:flex space-x-8">
                     <a href="dashboard.html" class="text-gray-600 hover:text-medical-primary transition-colors">Dashboard</a>
                     <a href="mis-citas-doctor.html" class="text-medical-primary font-medium">Mis Citas</a>
-                    <a href="pacientes.html" class="text-gray-600 hover:text-medical-primary transition-colors">Usuarios</a>
+                    <a href="pacientes.html" class="text-gray-600 hover:text-medical-primary transition-colors">Pacientes</a>
                 </nav>
 
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <img class="w-8 h-8 rounded-full" src="/placeholder.svg?height=32&width=32" alt="Usuario">
-                        <div class="text-right">
-                            {% for doctor in doctores %}
-                            <p class="text-sm font-medium text-gray-700">{{ doctor.get_full_name }}</p>
-                            <p class="text-xs text-gray-500">{{ doctor.especialidad }}</p>
-                            {%endfor%}
-                        </div>
-                    </div>
-                    <a href="{% url 'inicio' %}" class="text-gray-600 hover:text-medical-primary">Cerrar sesión</a>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                    </button>
-                </div>
+                {% include "gestor/header.html" %}
             </div>
         </div>
     </header>
@@ -136,7 +121,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Usuarios Hoy</p>
+                        <p class="text-sm font-medium text-gray-600">Pacientes Hoy</p>
                         <p class="text-2xl font-bold text-medical-accent">{{ pacientes_hoy_count }}</p>
                     </div>
                 </div>

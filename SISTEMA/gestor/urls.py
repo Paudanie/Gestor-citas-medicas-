@@ -10,10 +10,12 @@ urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('login/', views.login_view, name='login'),
     path('reservas/', views.reservas, name='reservas'),
+    path('datos_personales/', views.datos_personales, name='datos_personales'),
     path('portal_pacientes/', views.portal_pacientes, name='portal_pacientes'),
     path('portal_doctores/', views.portal_doctores, name='portal_doctores'),
     path('registro/', views.registro_usuario, name='registro_usuario'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='inicio'), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
+
 
     path('test/', views.test, name='test'),
     #path('portal_pacientes', views.portalPacientes, name='citas'),

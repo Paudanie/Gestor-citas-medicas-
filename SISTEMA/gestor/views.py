@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.http import JsonResponse
@@ -17,10 +17,20 @@ def inicio(request):
     print("Función inicio-llamar doctores, llamada exitosamente.")
     return render(request, 'gestor/index.html', {'doctores': doctores})
 
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Cierre de sesión exitoso.")
+    return redirect('inicio')
+
 def test(request):
     doctores = Usuario.objects.all()
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/test.html', {'doctores': doctores}, {'citas': citas})
+
+def datos_personales(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'gestor/datos_personales.html', {'usuarios':usuarios})
+
 
 
 
@@ -39,8 +49,9 @@ def login_view(request):
 
         if user is not None:
             auth_login(request, user)
-            print("LOGUEADO OK:", request.user)  # <--- agrega esto
-            print("GRUPOS:", list(request.user.groups.values_list('name', flat=True)))
+            #print("LOGUEADO OK:", request.user)  # <--- agrega esto
+            #print("GRUPOS:", list(request.user.groups.values_list('name', flat=True)))
+            messages.success(request, "Inicio de sesión exitoso.")
             if user.groups.filter(name='Doctores').exists():
                 return redirect('portal_doctores')
 

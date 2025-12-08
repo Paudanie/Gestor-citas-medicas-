@@ -1,0 +1,67 @@
+<div class="relative">
+
+    {% if user.is_authenticated %}
+    <!-- Botón que muestra nombre + flecha -->
+    <button onclick="toggleMenu()" 
+            class="flex items-center gap-2 px-3 py-2 bg-white shadow rounded hover:bg-gray-50">
+        <span>{{ user.first_name }} {{ user.last_name }}</span>
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
+
+    <!-- Menú -->
+    <div id="userMenu" 
+         class="absolute right-0 mt-2 w-48 bg-white shadow-lg border border-gray-200 rounded hidden">
+
+        <!-- Enlace al portal correspondiente -->
+        {% if user.especialidad %}
+            <!-- Doctor -->
+            <a href="{% url 'portal_doctores' %}" 
+               class="block px-4 py-2 hover:bg-gray-100">Portal Doctor</a>
+        {% else %}
+            <!-- Paciente -->
+            <a href="{% url 'portal_pacientes' %}" 
+               class="block px-4 py-2 hover:bg-gray-100">Portal Paciente</a>
+        {% endif %}
+
+        <!-- Mis Datos -->
+        <a href="{% url 'datos_personales' %}" 
+           class="block px-4 py-2 hover:bg-gray-100">Mis Datos</a>
+
+        <hr>
+
+        <!-- Logout -->
+        <a href="{% url 'logout' %}?ok=1" 
+            class="block px-4 py-2 text-red-600 hover:bg-red-50">
+            Cerrar sesión
+        </a>
+
+    </div>
+
+    {% else %}
+    <!-- Cuando NO está logueado -->
+    <a href="{% url 'login' %}" 
+       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+       Iniciar sesión
+    </a>
+    {% endif %}
+</div>
+
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("userMenu");
+    menu.classList.toggle("hidden");
+}
+
+// Ocultar menú al clicar fuera
+document.addEventListener("click", function(e) {
+    const menu = document.getElementById("userMenu");
+    const button = menu.previousElementSibling;
+
+    if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add("hidden");
+    }
+});
+</script>
