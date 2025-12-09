@@ -15,6 +15,7 @@ urlpatterns = [
     path('portal_doctores/', views.portal_doctores, name='portal_doctores'),
     path('registro/', views.registro_usuario, name='registro_usuario'),
     path('logout/', views.logout_view, name='logout'),
+    path("editar-perfil/", views.editar_perfil, name="editar_perfil"),
 
 
     path('test/', views.test, name='test'),

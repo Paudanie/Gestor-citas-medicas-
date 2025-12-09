@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Editar Perfil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            primary: '#2563eb',
+                            secondary: '#1e40af',
+                            accent: '#06b6d4',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-cyan-50 min-h-screen font-sans">
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl w-full space-y-8">
+
+        <!-- Header -->
+        <div class="text-center">
+            <div class="mx-auto h-16 w-16 bg-medical-primary rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Editar Perfil</h2>
+            <p class="text-gray-600">Actualiza tu información personal</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+
+            <!-- Errores -->
+            {% if form.errors %}
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <span class="font-medium">Corrige los errores en el formulario.</span>
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Información Personal -->
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Información Personal</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Nombre</label>
+                            <input type="text" name="first_name" value="{{ form.first_name.value }}" 
+                                   class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                            {% for error in form.first_name.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Apellido</label>
+                            <input type="text" name="last_name" value="{{ form.last_name.value }}"
+                                   class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                            {% for error in form.last_name.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Email</label>
+                            <input type="email" name="email" value="{{ form.email.value }}"
+                                   class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                            {% for error in form.email.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Teléfono</label>
+                            <input type="text" name="telefono" value="{{ form.telefono.value }}"
+                                   class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                            {% for error in form.telefono.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-2">Dirección</label>
+                        <input type="text" name="direccion" value="{{ form.direccion.value }}"
+                               class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                        {% for error in form.direccion.errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-2">Fecha de nacimiento</label>
+                        <input type="date" name="fecha_nac" value="{{ form.fecha_nac.value }}"
+                               class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                        {% for error in form.fecha_nac.errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Información Médica -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Información Médica</h3>
+
+                    <label class="block text-sm font-medium mb-2">Discapacidades</label>
+                    <select name="discapacidades" multiple size="4"
+                            class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                        {% for d in form.discapacidades.field.queryset %}
+                            <option value="{{ d.id }}"
+                                {% if d.id in form.discapacidades.value %}selected{% endif %}>
+                                {{ d.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.discapacidades.errors %}
+                        <p class="text-red-600 text-sm">{{ error }}</p>
+                    {% endfor %}
+
+                    <label class="block text-sm font-medium mb-2 mt-4">Enfermedades crónicas</label>
+                    <select name="enfermedades" multiple size="4"
+                            class="w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-medical-primary">
+                        {% for e in form.enfermedades.field.queryset %}
+                            <option value="{{ e.id }}"
+                                {% if e.id in form.enfermedades.value %}selected{% endif %}>
+                                {{ e.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.enfermedades.errors %}
+                        <p class="text-red-600 text-sm">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-8 flex justify-center">
+                    <button type="submit"
+                            class="px-6 py-3 bg-medical-primary text-white rounded-lg hover:bg-medical-secondary transition">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+{% endblock %}

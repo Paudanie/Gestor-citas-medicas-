@@ -169,6 +169,22 @@ def registro_usuario(request):
     return render(request, 'gestor/registro.html', {'form': form})
 
 
+@login_required
+def editar_perfil(request):
+    usuario = request.user
+
+    if request.method == "POST":
+        form = UsuarioUpdateForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tus datos fueron actualizados.")
+            return redirect("portal_pacientes")
+    else:
+        form = UsuarioUpdateForm(instance=usuario)
+
+    return render(request, "gestor/editar_perfil.html", {"form": form})
+
+
 
 # ======================================================
 # =================== CRUD PACIENTES ===================

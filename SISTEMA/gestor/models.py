@@ -39,13 +39,48 @@ class Tratamiento(models.Model):
     def __str__(self):
         return f"{self.medicamento} {self.dosis}"
 
+def validar_rut(rut):
+    # Normalizar
+    rut = rut.replace(".", "").replace("-", "").upper()
+    
+    if len(rut) < 8:
+        raise ValidationError("RUT inválido")
+
+    cuerpo = rut[:-1]
+    dv_ingresado = rut[-1]
+
+    if not cuerpo.isdigit():
+        raise ValidationError("RUT inválido")
+
+    # Algoritmo módulo 11 correcto
+    suma = 0
+    multiplicador = 2
+
+    for c in reversed(cuerpo):
+        suma += int(c) * multiplicador
+        multiplicador += 1
+        if multiplicador > 7:
+            multiplicador = 2
+
+    resto = suma % 11
+    dv_calculado = 11 - resto
+
+    if dv_calculado == 11:
+        dv_calculado = "0"
+    elif dv_calculado == 10:
+        dv_calculado = "K"
+    else:
+        dv_calculado = str(dv_calculado)
+
+    if dv_calculado != dv_ingresado:
+        raise ValidationError("RUT inválido")
 
 
 # --- CLASS MÁS IMPORTANTES ---
 # -- PERSONAS --
 class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usuario, la contraseña, y el manejo seguro de estos
     username = None  # anular campo username por completo
-    rut = models.CharField(unique=True, primary_key=True, max_length=12)
+    rut = models.CharField(max_length=12, primary_key=True, validators=[validar_rut])
     USERNAME_FIELD = 'rut'
     REQUIRED_FIELDS = []  # importantísimo
 

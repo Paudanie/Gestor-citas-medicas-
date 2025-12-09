@@ -69,6 +69,21 @@ class PacienteForm(forms.ModelForm):
         #fields = ['rol_trabajo']
 '''
 
+class UsuarioUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "telefono",
+            "direccion",
+            "fecha_nac",
+            "discapacidades",
+            "enfermedades",
+        ]
+
+
 
 # --- MODELOS PRINCIPALES ---
 class CitaMedicaForm(forms.ModelForm):
