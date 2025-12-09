@@ -190,6 +190,11 @@
                             <input type="text" name="codigo_seguridad" id="codigo_seguridad"
                                    class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-medical-primary"/>
                         </div>
+                        <div id="campo-especialidad" style="display: none;">
+                            <label class="font-semibold">Especialidad</label>
+                            {{ form.especialidad }}
+                        </div>
+
 
                         <!-- BOTÓN -->
                         <button type="submit"
@@ -213,6 +218,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const codigoInput = document.querySelector('[name="codigo_secreto"]');
+        const divEspecialidad = document.getElementById("campo-especialidad");
+
+        function toggleEspecialidad() {
+            if (codigoInput.value.trim() !== "") {
+                divEspecialidad.style.display = "block";
+            } else {
+                divEspecialidad.style.display = "none";
+                // Cuando se oculta, vaciamos el campo
+                const espInput = document.querySelector('[name="especialidad"]');
+                espInput.value = "";
+            }
+        }
+
+        codigoInput.addEventListener("input", toggleEspecialidad);
+        toggleEspecialidad();
+    });
+    </script>
+
 
 </body>
 </html>

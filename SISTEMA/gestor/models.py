@@ -122,6 +122,8 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
 
         super().save(*args, **kwargs)
 
+    
+
 
     '''
     def __str__(self):

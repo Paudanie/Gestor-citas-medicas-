@@ -120,6 +120,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 LOGIN_URL = '/login/'
+CODIGO_SECRETO_DOCTOR = "USTED-ES-EL-DOC,DOC"
+
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

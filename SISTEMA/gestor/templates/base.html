@@ -117,11 +117,10 @@
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#servicios" class="text-gray-700 hover:text-medical-primary transition-colors">Servicios</a>
-                    <a href="#especialidades" class="text-gray-700 hover:text-medical-primary transition-colors">Especialidades</a>
-                    <a href="#doctores" class="text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
-                    <a href="#contacto" class="text-gray-700 hover:text-medical-primary transition-colors">Contacto</a>
-                    {% include "gestor/header.html" %}
+                    {% block header_personalizado %}
+                    {% endblock %}
+                    <a href="{% url 'lista_doctores'%}" class="text-gray-700 hover:text-medical-primary transition-colors">Doctores</a>
+                    
 
 
 
@@ -132,12 +131,14 @@
 
                         <a href="{% url 'lista_pacientes' %}" 
                         class="block px-4 py-2 hover:bg-gray-100">Lista de Pacientes</a>
+                        {% include "gestor/header.html" %}
                     {% else %}
                         <!-- Paciente -->
                         <a href="{% url 'portal_pacientes' %}" 
                         class="block px-4 py-2 hover:bg-gray-100">Portal Paciente</a>
+                        {% include "gestor/header.html" %}
                         <button onclick="openReservaModal()" class="bg-medical-primary text-white px-6 py-2 rounded-lg hover:bg-medical-secondary transition-colors font-medium text-lg shadow-lg">
-                            Reservar Cita
+                            <strong>Reservar Cita</strong>
                         </button>
                     {% endif %}
                     

@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.contrib.auth.models import Group
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from .models import *
@@ -147,26 +147,30 @@ def lista_pacientes(request):
     usuarios = Usuario.objects.all()
     return render(request, 'gestor/lista_pacientes.html', {'usuarios':usuarios})
 
+def lista_doctores(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'gestor/lista_doctores.html', {'usuarios':usuarios})
+
 
 # --- REGISTRO DE USUARIOS ---
 def registro_usuario(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
+
         if form.is_valid():
-            usuario = form.save()  # UserCreationForm ya guarda el password con hash
+            usuario = form.save(commit=False)
 
-            # Si quieres permitir crear doctores con código:
-            codigo = form.cleaned_data.get('codigo_seguridad')
-            if codigo == 'codigo_doctor':
-                usuario.especialidad = "General"
-                usuario.save()
-
+            # Guardar contraseña correctamente
+            usuario.set_password(form.cleaned_data['password1'])
+            usuario.save()
             messages.success(request, 'Usuario registrado correctamente.')
             return redirect('login')
+
     else:
         form = RegistroForm()
-
     return render(request, 'gestor/registro.html', {'form': form})
+
+
 
 
 @login_required
@@ -298,28 +302,52 @@ def crear_cita(request):
         form = CitaMedicaForm()
     return render(request, 'gestor/cita_form.html', {'form': form})
 
+
 @login_required
-def editar_cita(request, id):
-    cita = get_object_or_404(CitaMedica, id=id)
-    if request.method == 'POST':
-        form = CitaMedicaForm(request.POST, instance=cita)
+def editar_cita(request, id_cita):
+    cita = get_object_or_404(CitaMedica, id_cita=id_cita)
+
+    # Permisos
+    if request.user != cita.paciente and request.user != cita.doctor:
+        return HttpResponse("No tienes permiso para editar esta cita.", status=403)
+
+    if request.method == "POST":
+        form = CitaEditForm(request.POST, instance=cita)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Cita actualizada correctamente.')
-            return redirect('listar_citas')
+            try:
+                cita = form.save(commit=False)
+
+                # ---> FIX CLAVE <---
+                if cita.estado == "cancelada":
+                    cita.estado = "pendiente"
+
+                cita.save()
+
+                messages.success(request, "La cita fue modificada correctamente.")
+                return redirect("portal_pacientes")
+
+            except ValidationError as e:
+                form.add_error(None, e.message)
+
     else:
-        form = CitaMedicaForm(instance=cita)
-    return render(request, 'gestor/cita_form.html', {'form': form})
+        form = CitaEditForm(instance=cita)
+
+    return render(request, "gestor/editar_cita.html", {"form": form, "cita": cita})
+
+
 
 @login_required
-def eliminar_cita(request, id):
-    cita = get_object_or_404(CitaMedica, id=id)
-    if request.method == 'POST':
-        cita.delete()
-        messages.success(request, 'Cita eliminada correctamente.')
-        return redirect('listar_citas')
-    return render(request, 'gestor/cita_confirm_delete.html', {'cita': cita})
+def eliminar_cita(request, id_cita):
+    cita = get_object_or_404(CitaMedica, id_cita=id_cita)
 
+    # Permisos
+    if request.user != cita.paciente and request.user != cita.doctor:
+        return HttpResponse("No tienes permiso para eliminar esta cita.", status=403)
+
+    cita.delete()
+
+    messages.success(request, "La cita fue eliminada correctamente.")
+    return redirect('portal_pacientes')
 
 
 def guardar_solicitud_cita(request):
@@ -397,17 +425,21 @@ def finalizar_cita(request, cita_id):
     return JsonResponse({"message": "Cita finalizada correctamente"})
 
 
-@login_required
-def cancelar_cita(request, cita_id):
-    cita = get_object_or_404(CitaMedica, id_cita=cita_id)
 
-    if request.user != cita.doctor:
-        return JsonResponse({"error": "No autorizado"}, status=403)
+@login_required
+def cancelar_cita(request, id_cita):
+    cita = get_object_or_404(CitaMedica, id_cita=id_cita)
+
+    # Permisos
+    if request.user != cita.paciente and request.user != cita.doctor:
+        return HttpResponse("No tienes permiso para cancelar esta cita.", status=403)
 
     cita.estado = "cancelada"
     cita.save()
 
-    return JsonResponse({"ok": True, "message": "Cita cancelada."})
+    messages.success(request, "La cita fue cancelada correctamente.")
+    return redirect('portal_pacientes')
+
 
 
 

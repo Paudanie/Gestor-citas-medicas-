@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow">
+
+    <h2 class="text-2xl font-bold mb-4">Editar Cita {{ cita.id_cita }}</h2>
+
+    <!-- Errores generales del formulario -->
+    {% if form.non_field_errors %}
+        <div class="mb-4 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- CAMPO DOCTOR -->
+        <div class="mb-4">
+            <label class="block font-semibold mb-1">Doctor</label>
+            {{ form.doctor }}
+
+            {% for error in form.doctor.errors %}
+                <p class="text-red-600 text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- CAMPO FECHA HORA -->
+        <div class="mb-4">
+            <label class="block font-semibold mb-1">Fecha y Hora</label>
+            {{ form.fecha_hora }}
+
+            {% for error in form.fecha_hora.errors %}
+                <p class="text-red-600 text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- CAMPO NOTAS -->
+        <div class="mb-4">
+            <label class="block font-semibold mb-1">Notas</label>
+            {{ form.notas }}
+
+            {% for error in form.notas.errors %}
+                <p class="text-red-600 text-sm">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            Guardar cambios
+        </button>
+    </form>
+</div>
+
+{% endblock %}

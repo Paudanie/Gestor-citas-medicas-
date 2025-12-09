@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
+from django.conf import settings
 
 
 # --- FORMULARIOS BÁSICOS ---
@@ -33,7 +34,17 @@ class TratamientoForm(forms.ModelForm):
 # ---- PERSONAS ----
 # --- USUARIO ---
 class RegistroForm(UserCreationForm):
-    #codigo_seguridad = forms.CharField(required=False)
+    codigo_secreto = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Código secreto (solo doctores)'}),
+        label="Código de Doctor"
+    )
+
+    especialidad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Especialidad médica'}),
+        label="Especialidad"
+    )
 
     class Meta:
         model = Usuario
@@ -49,7 +60,25 @@ class RegistroForm(UserCreationForm):
             'direccion',
             'discapacidades',
             'enfermedades',
+            'especialidad',      # <-- IMPORTANTE: ahora sí existe
         ]
+
+    def clean(self):
+        cleaned = super().clean()
+
+        especialidad = cleaned.get("especialidad")
+        codigo = cleaned.get("codigo_secreto")
+
+        # Caso 1: Si ingresa especialidad, DEBE ingresar código correcto
+        if especialidad:
+            if codigo != settings.CODIGO_SECRETO_DOCTOR:
+                self.add_error("codigo_secreto", "Código secreto incorrecto.")
+
+        # Caso 2: Si ingresa código pero NO especialidad
+        if codigo and not especialidad:
+            self.add_error("especialidad", "Debes ingresar una especialidad para registrarte como doctor.")
+
+        return cleaned
 
 
 # --- PERFILES ---
@@ -94,6 +123,16 @@ class CitaMedicaForm(forms.ModelForm):
     class Meta:
         model = CitaMedica
         fields = '__all__'
+
+class CitaEditForm(forms.ModelForm):
+    class Meta:
+        model = CitaMedica
+        fields = ["doctor", "fecha_hora", "notas"]
+        widgets = {
+            "fecha_hora": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        }
+
+
 
 class RecetaForm(forms.ModelForm):
     tratamiento = forms.ModelMultipleChoiceField(

@@ -24,7 +24,7 @@ urlpatterns = [
     # ======================================================
     # =================== PACIENTES ========================
     # ======================================================
-    path('pacientes/', views.listar_pacientes, name='listar_pacientes'),
+    #path('pacientes/', views.listar_pacientes, name='listar_pacientes'),
     path('pacientes/crear/', views.crear_paciente, name='crear_paciente'),
     path('pacientes/editar/<int:id>/', views.editar_paciente, name='editar_paciente'),
     path('pacientes/eliminar/<int:id>/', views.eliminar_paciente, name='eliminar_paciente'),
@@ -32,17 +32,18 @@ urlpatterns = [
     # ======================================================
     # =================== DOCTORES =========================
     # ======================================================
-    path('doctores/', views.listar_doctores, name='listar_doctores'),
+    #path('doctores/', views.listar_doctores, name='listar_doctores'),
     path('doctores/crear/', views.crear_doctor, name='crear_doctor'),
     path('doctores/editar/<int:id>/', views.editar_doctor, name='editar_doctor'),
     path('doctores/eliminar/<int:id>/', views.eliminar_doctor, name='eliminar_doctor'),
     path('lista_pacientes/', views.lista_pacientes, name='lista_pacientes'),
+    path('lista_doctores/', views.lista_doctores, name='lista_doctores'),
 
     # ======================================================
     # =================== CITAS MÉDICAS ====================
     # ======================================================
     #path('test/', views.listar_citas, name='listar_citas'),
-    path('citas/', views.listar_citas, name='listar_citas'),
+    #path('citas/', views.listar_citas, name='listar_citas'),
     path('citas/crear/', views.crear_cita, name='crear_cita'),
     path('crear_reserva/', views.crear_reserva, name='crear_reserva'),
     path('citas/editar/<int:id>/', views.editar_cita, name='editar_cita'),
@@ -52,6 +53,11 @@ urlpatterns = [
 
     path('citas/<str:cita_id>/confirmar/', views.confirmar_cita, name='confirmar_cita'),
     path('citas/<str:cita_id>/finalizar/', views.finalizar_cita, name='finalizar_cita'),
+
+    path("cita/<str:id_cita>/cancelar/", views.cancelar_cita, name="cancelar_cita"),
+    path("cita/<str:id_cita>/editar/", views.editar_cita, name="editar_cita"),
+    path("cita/<str:id_cita>/eliminar/", views.eliminar_cita, name="eliminar_cita"),
+
 
 
     # ======================================================
