@@ -34,8 +34,11 @@
                 {% for c in citas %}
                 <li class="p-4 border rounded shadow-sm bg-gray-50">
                     <p><strong>Doctor:</strong> {{ c.doctor.first_name }} {{ c.doctor.last_name }}</p>
-                    <p><strong>Fecha:</strong> {{ c.fecha }}</p>
-                    <p><strong>Hora:</strong> {{ c.hora }}</p>
+                    <p><strong>Fecha:</strong> {{ c.fecha_hora|date:"d-m-Y" }}</p>
+                    <p><strong>Hora:</strong> {{ c.fecha_hora|time:"H:i" }}</p>
+                    <p><strong>Descripción:</strong> {{ c.notas }}</p>
+                    <p><strong>Estado: {{ c.estado }}</strong> </p>
+
                     {% if c.motivo %}
                         <p><strong>Motivo:</strong> {{ c.motivo }}</p>
                     {% endif %}

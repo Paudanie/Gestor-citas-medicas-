@@ -1,5 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.exceptions import ValidationError
+
 
 def crear_notificacion(usuario, mensaje):
     # 1) Guardar notificación interna
@@ -141,6 +143,9 @@ def portal_doctores(request):
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/portal_doctores.html', {'doctores': doctores, 'citas': citas})
 
+def lista_pacientes(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'gestor/lista_pacientes.html', {'usuarios':usuarios})
 
 
 # --- REGISTRO DE USUARIOS ---
@@ -267,9 +272,12 @@ def crear_cita(request):
     if request.method == 'POST':
         form = CitaMedicaForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Cita creada correctamente.')
-            return redirect('listar_citas')
+            try:
+                form.save()
+                messages.success(request, 'Cita creada correctamente.')
+                return redirect('listar_citas')
+            except ValidationError as e:
+                form.add_error(None, e.message)
     else:
         form = CitaMedicaForm()
     return render(request, 'gestor/cita_form.html', {'form': form})
@@ -388,29 +396,34 @@ def cancelar_cita(request, cita_id):
 
 
 def crear_reserva(request):
-    rut = request.POST.get("rut", "").strip()
-    if not rut:
-        return JsonResponse({"success": False, "message": "Debe ingresar el RUT"})
-    
-    email = request.POST.get("email", "").strip()
-    if not email:
-        return JsonResponse({"success": False, "message": "Debe ingresar el Email"})
 
-    if request.method == 'POST':
+    # ============================================
+    # 1. SI EL USUARIO ESTÁ LOGUEADO → NO PIDE DATOS
+    # ============================================
+    if request.user.is_authenticated:
+        paciente = request.user
+        nombre = paciente.first_name
+        email = paciente.email
+        telefono = paciente.telefono
+        fecha_nac = paciente.fecha_nac
+
+    # ============================================
+    # 2. SI NO ESTÁ LOGUEADO → FORMULARIO COMPLETO
+    # ============================================
+    else:
+        rut = request.POST.get("rut", "").strip()
+        if not rut:
+            return JsonResponse({"success": False, "message": "Debe ingresar el RUT"})
+        
+        email = request.POST.get("email", "").strip()
+        if not email:
+            return JsonResponse({"success": False, "message": "Debe ingresar el Email"})
+
         nombre = request.POST.get('nombre')
-        email = request.POST.get('email')
         telefono = request.POST.get('telefono')
         fecha_nac = request.POST.get('fecha_nac')
-        especialidad = request.POST.get('especialidad')
-        doctor_id = request.POST.get('doctor')
-        fecha = request.POST.get('fecha')
-        hora = request.POST.get('hora')
-        notas = request.POST.get('notas')
 
-        # Buscar doctor (si el usuario seleccionó uno)
-        doctor = Usuario.objects.filter(id_usuario=doctor_id).first() if doctor_id else None
-
-        # Crear un paciente básico (solo si no existe uno con el mismo email)
+        # Crear o buscar usuario paciente
         paciente, created = Usuario.objects.get_or_create(
             rut=rut,
             defaults={
@@ -419,23 +432,56 @@ def crear_reserva(request):
                 'telefono': telefono,
                 'fecha_nac': fecha_nac,
                 'direccion': 'No especificada',
-                #'id_usuario': f'P{telefono}',  # generar ID básico
             }
         )
 
-        # Crear cita
+    # ============================================
+    # 3. DATOS DE LA CITA
+    # ============================================
+    especialidad = request.POST.get('especialidad')
+    doctor_rut = request.POST.get('doctor')
+    fecha = request.POST.get('fecha')
+    hora = request.POST.get('hora')
+    notas = request.POST.get('notas')
+
+    # ============================================
+    # 4. OBTENER DOCTOR (Usuario del grupo Doctores)
+    # ============================================
+    if doctor_rut:
+        doctor = Usuario.objects.filter(
+            rut=doctor_rut,
+            groups__name='Doctores'
+        ).first()
+    else:
+        doctor = Usuario.objects.filter(groups__name='Doctores').first()
+
+    if not doctor:
+        return JsonResponse({"success": False, "message": "No hay doctores disponibles."})
+
+    # ============================================
+    # 5. CONVERTIR fecha + hora A DATETIME REAL
+    # ============================================
+    try:
+        fecha_hora_dt = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return JsonResponse({"success": False, "message": "Formato de fecha u hora inválido."})
+
+    # ============================================
+    # 6. CREAR CITA (con validaciones del modelo)
+    # ============================================
+    try:
         CitaMedica.objects.create(
             id_cita=f"CITA_{datetime.now().strftime('%Y%m%d%H%M%S')}",
             paciente=paciente,
-            doctor=doctor if doctor else Usuario.objects.first(),
-            fecha_hora=f"{fecha} {hora}",
+            doctor=doctor,
+            fecha_hora=fecha_hora_dt,
             estado='pendiente',
             notas=notas
         )
+    except ValidationError as e:
+        return JsonResponse({"success": False, "message": str(e)})
 
-        messages.success(request, 'Tu solicitud de cita fue enviada correctamente.')
-        return redirect('portal_pacientes')  # o donde quieras redirigir
-
+    messages.success(request, "Tu solicitud de cita fue enviada correctamente.")
     return redirect('portal_pacientes')
 
 # ======================================================

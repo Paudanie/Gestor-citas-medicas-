@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser, Group
 from datetime import date
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import time
 
 
 
@@ -135,6 +138,29 @@ class CitaMedica(models.Model):
 
     def __str__(self):
         return f"Cita {self.id_cita} - {self.paciente} con {self.doctor} a las {self.fecha_hora}"
+    
+    # ⬇⬇⬇ AGREGA ESTO ⬇⬇⬇
+    def clean(self):
+        # --- 1. Choque de horarios ---
+        choque = CitaMedica.objects.filter(
+            doctor=self.doctor,
+            fecha_hora=self.fecha_hora
+        ).exclude(id_cita=self.id_cita)
+
+        if choque.exists():
+            raise ValidationError("El doctor ya tiene una cita en ese horario.")
+
+        # --- 2. Horario laboral (ejemplo: 09:00 a 18:00) ---
+        hora = self.fecha_hora.time()
+        inicio = time(9, 0)
+        fin = time(18, 0)
+
+        if not (inicio <= hora <= fin):
+            raise ValidationError("La cita está fuera del horario laboral del doctor (09:00–18:00).")
+
+    def save(self, *args, **kwargs):
+        self.clean()  # obliga validación siempre
+        super().save(*args, **kwargs)
 
 
 class Receta(models.Model):
