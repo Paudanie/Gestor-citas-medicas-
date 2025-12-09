@@ -1,14 +1,39 @@
+from django.core.mail import send_mail
+from django.conf import settings
+
+def crear_notificacion(usuario, mensaje):
+    # 1) Guardar notificación interna
+    Notificacion.objects.create(usuario=usuario, mensaje=mensaje)
+
+    # 2) Enviar correo
+    if usuario.email:
+        try:
+            send_mail(
+                subject="Actualización sobre tu cita médica",
+                message=mensaje,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[usuario.email],
+                fail_silently=True
+            )
+        except Exception as e:
+            print("❌ Error enviando correo:", e)
+
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.http import JsonResponse
-from .models import SolicitudCita
-from .models import CitaMedica, Usuario, Usuario
+from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from .models import *
 from .forms import *
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
+
+
 
 
 # --- PÁGINAS PRINCIPALES ---
@@ -69,9 +94,46 @@ def reservas(request):
     return render(request, 'gestor/reservar-cita.html', {'citas': citas})
 
 
-def portal_pacientes(request):
+'''def portal_pacientes(request):
     citas = CitaMedica.objects.all()
     return render(request,'gestor/portal_pacientes.html', {'citas': citas})
+'''
+
+def portal_pacientes(request):
+
+    # 🟢 1. Si está logueado → mostrar sus citas
+    if request.user.is_authenticated:
+        citas = CitaMedica.objects.filter(paciente=request.user).order_by('fecha_hora')
+        return render(request, "gestor/portal_pacientes.html", {
+            "usuario_consultado": request.user,
+            "citas": citas,
+            "modo": "usuario_logueado"
+        })
+
+    # 🔵 2. Si NO está logueado, permitir consulta por RUT
+    if request.method == "POST":
+        rut = request.POST.get("rut")
+
+        try:
+            paciente = Usuario.objects.get(rut=rut)
+        except Usuario.DoesNotExist:
+            messages.error(request, "No existe un paciente con ese RUT.")
+            paciente = None
+            citas = []
+        else:
+            citas = CitaMedica.objects.filter(paciente=paciente).order_by('fecha_hora')
+
+        return render(request, "gestor/portal_pacientes.html", {
+            "usuario_consultado": paciente,
+            "citas": citas,
+            "modo": "consulta_rut"
+        })
+
+    # 🔸 3. Primera vez visitando → pedir RUT
+    return render(request, "gestor/portal_pacientes.html", {
+        "modo": "sin_autenticacion"
+    })
+
 
 @login_required
 def portal_doctores(request):
@@ -257,15 +319,71 @@ def guardar_solicitud_cita(request):
     return JsonResponse({"success": False, "message": "Método no permitido."})
 
 
+
+'''
+def confirmar_cita(request, cita_id):
+    cita = get_object_or_404(CitaMedica, id_cita=cita_id)
+
+    if request.user != cita.doctor:
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    fecha_hora = cita.fecha_hora
+
+    # Validación principal
+    if not doctor_disponible(cita.doctor, fecha_hora):
+        return JsonResponse({
+            "ok": False,
+            "message": "No puedes confirmar esta cita: está fuera de horario o se cruza con otra."
+        })
+
+    cita.estado = "confirmada"
+    cita.save()
+
+    return JsonResponse({"ok": True, "message": "Cita confirmada exitosamente."})
+'''
 @login_required
 def confirmar_cita(request, cita_id):
-    if request.method == 'POST':
-        cita = CitaMedica.objects.get(id=cita_id)
-        cita.estado = "Confirmada"
-        cita.save()
-        return JsonResponse({"ok": True})
-    return JsonResponse({"error": "invalid method"}, status=405)
+    if request.method != "POST":
+        return JsonResponse({"message": "Método no permitido"}, status=405)
 
+    try:
+        cita = CitaMedica.objects.get(id_cita=cita_id)
+    except CitaMedica.DoesNotExist:
+        return JsonResponse({"message": "Cita no encontrada"}, status=404)
+
+    cita.estado = "confirmada"
+    cita.save()
+
+    return JsonResponse({"message": "Cita confirmada correctamente"})
+
+
+@login_required
+def finalizar_cita(request, cita_id):
+    if request.method != "POST":
+        return JsonResponse({"message": "Método no permitido"}, status=405)
+
+    try:
+        cita = CitaMedica.objects.get(id_cita=cita_id)
+    except CitaMedica.DoesNotExist:
+        return JsonResponse({"message": "Cita no encontrada"}, status=404)
+
+    cita.estado = "finalizada"
+    cita.save()
+
+    return JsonResponse({"message": "Cita finalizada correctamente"})
+
+
+@login_required
+def cancelar_cita(request, cita_id):
+    cita = get_object_or_404(CitaMedica, id_cita=cita_id)
+
+    if request.user != cita.doctor:
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    cita.estado = "cancelada"
+    cita.save()
+
+    return JsonResponse({"ok": True, "message": "Cita cancelada."})
 
 
 
@@ -371,3 +489,25 @@ def listar_solicitudes(request):
     solicitudes = SolicitudCita.objects.all()
     print("Solicitudes encontradas:", solicitudes)
     return render(request, 'gestor/solicitudes_list.html', {'solicitudes': solicitudes})
+
+
+def doctor_disponible(doctor, fecha_hora):
+    """Devuelve True si el doctor puede tomar la cita."""
+
+    # A) Validar horario laboral
+    if doctor.hora_inicio and doctor.hora_fin:
+        if not (doctor.hora_inicio <= fecha_hora.time() <= doctor.hora_fin):
+            return False
+
+    # B) Validar choque con otras citas
+    inicio = fecha_hora
+    fin = fecha_hora + timedelta(minutes=30)  # Duración estándar 30 min
+
+    choques = CitaMedica.objects.filter(
+        doctor=doctor,
+        fecha_hora__lt=fin,
+        fecha_hora__gte=inicio - timedelta(minutes=30),
+        estado__in=["pendiente", "confirmada"]
+    )
+
+    return not choques.exists()

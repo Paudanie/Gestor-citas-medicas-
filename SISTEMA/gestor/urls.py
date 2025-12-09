@@ -46,6 +46,11 @@ urlpatterns = [
     path('citas/editar/<int:id>/', views.editar_cita, name='editar_cita'),
     path('citas/eliminar/<int:id>/', views.eliminar_cita, name='eliminar_cita'),
     path('guardar-solicitud/', views.guardar_solicitud_cita, name='guardar_solicitud'),
+    path("citas/<str:cita_id>/cancelar/", views.cancelar_cita, name="cancelar_cita"),
+
+    path('citas/<str:cita_id>/confirmar/', views.confirmar_cita, name='confirmar_cita'),
+    path('citas/<str:cita_id>/finalizar/', views.finalizar_cita, name='finalizar_cita'),
+
 
     # ======================================================
     # =================== RECETAS ==========================
@@ -57,8 +62,7 @@ urlpatterns = [
     # ======================================================
     # ================= SOLICITUDES ========================
     # ======================================================
-    path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),
-    
+    path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),    
 ]
 
 

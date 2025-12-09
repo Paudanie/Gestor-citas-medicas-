@@ -216,6 +216,14 @@ class SolicitudCita(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.especialidad} ({self.estado})"
 
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="notificaciones")
+    mensaje = models.CharField(max_length=255)
+    leida = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notif. para {self.usuario.rut}: {self.mensaje}"
 
 
 
