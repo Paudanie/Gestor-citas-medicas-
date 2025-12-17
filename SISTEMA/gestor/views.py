@@ -39,7 +39,7 @@ def crear_notificacion(usuario, mensaje):
 # ================= PÁGINAS PRINCIPALES ================
 # ======================================================
 def inicio(request):
-    doctores = Usuario.objects.all()
+    doctores = Usuario.objects.exclude(especialidad__isnull=True).exclude(especialidad='')    
     print("Función inicio-llamar doctores, llamada exitosamente.")
     return render(request, 'gestor/index.html', {'doctores': doctores})
 
