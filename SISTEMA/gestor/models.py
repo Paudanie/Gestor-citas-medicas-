@@ -85,7 +85,7 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     REQUIRED_FIELDS = []  # importantísimo
 
     fecha_nac = models.DateField()
-    telefono = models.IntegerField()
+    telefono = models.CharField(max_length=15)
     direccion = models.CharField(max_length=100)
     enfermedades = models.ManyToManyField(Enfermedad, blank=True)
     discapacidades = models.ManyToManyField(Discapacidad, blank=True)
@@ -118,12 +118,15 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     )
 
     def save(self, *args, **kwargs):
+        self.rut = self.rut.replace(".", "").replace("-", "").upper()
+
         if self.pk is None and self.password:
             # Si ya viene con password plano, hashearlo
             from django.contrib.auth.hashers import make_password
             self.password = make_password(self.password)
 
         super().save(*args, **kwargs)
+
 
     
 

@@ -1,57 +1,151 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow">
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
 
-    <h2 class="text-2xl font-bold mb-4">Editar Cita {{ cita.id_cita }}</h2>
+    <!-- Header con título mejorado -->
+    <div class="mb-6 pb-4 border-b border-gray-200">
+        <h1 class="text-3xl font-bold text-gray-800">
+            ✏️ Editar Cita
+        </h1>
+        <p class="text-gray-600 mt-2">
+            ID de Cita: <span class="font-semibold text-blue-700">#{{ cita.id_cita }}</span>
+        </p>
+    </div>
 
     <!-- Errores generales del formulario -->
     {% if form.non_field_errors %}
-        <div class="mb-4 bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded">
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded shadow-sm">
+            <div class="flex items-start">
+                <span class="text-xl mr-2">⚠️</span>
+                <div>
+                    {% for error in form.non_field_errors %}
+                        <p class="font-medium">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" class="space-y-6">
         {% csrf_token %}
 
         <!-- CAMPO DOCTOR -->
-        <div class="mb-4">
-            
-                <label class="block font-semibold mb-1">Doctor</label>
+        <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">
+                👨‍⚕️ Doctor
+            </label>
+            <div class="relative">
                 {{ form.doctor }}
-
-                {% for error in form.doctor.errors %}
-                    <p class="text-red-600 text-sm">{{ error }}</p>
-                {% endfor %}
+            </div>
+            {% if form.doctor.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.doctor.errors %}
+                        <p class="flex items-center gap-1">
+                            <span>❌</span> {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <!-- CAMPO FECHA HORA -->
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Fecha y Hora</label>
-            {{ form.fecha_hora }}
-
-            {% for error in form.fecha_hora.errors %}
-                <p class="text-red-600 text-sm">{{ error }}</p>
-            {% endfor %}
+        <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">
+                📅 Fecha y Hora
+            </label>
+            <div class="relative">
+                {{ form.fecha_hora }}
+            </div>
+            {% if form.fecha_hora.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.fecha_hora.errors %}
+                        <p class="flex items-center gap-1">
+                            <span>❌</span> {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <!-- CAMPO NOTAS -->
-        <div class="mb-4">
-            <label class="block font-semibold mb-1">Notas</label>
-            {{ form.notas }}
-
-            {% for error in form.notas.errors %}
-                <p class="text-red-600 text-sm">{{ error }}</p>
-            {% endfor %}
+        <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">
+                📝 Notas
+            </label>
+            <div class="relative">
+                {{ form.notas }}
+            </div>
+            {% if form.notas.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.notas.errors %}
+                        <p class="flex items-center gap-1">
+                            <span>❌</span> {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
-        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-            Guardar cambios
-        </button>
+        <!-- Botones de acción -->
+        <div class="flex gap-3 pt-4 border-t border-gray-200">
+            <button type="submit" 
+                    class="flex-1 px-6 py-3 bg-medical-primary text-white font-semibold rounded-lg hover:bg-medical-secondary transition-colors shadow-md hover:shadow-lg">
+                💾 Guardar Cambios
+            </button>
+            <a href="{% url 'portal_pacientes' %}" 
+               class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold text-center rounded-lg hover:bg-gray-300 transition-colors shadow-md hover:shadow-lg">
+                ↩️ Cancelar
+            </a>
+        </div>
     </form>
+
+    <!-- Información adicional -->
+    <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+        <p class="text-sm text-blue-800">
+            <strong>💡 Consejo:</strong> Asegúrate de verificar la disponibilidad del doctor antes de confirmar los cambios.
+        </p>
+    </div>
+
 </div>
+
+<!-- Estilos adicionales para los campos del formulario -->
+<style>
+    /* Estilizar los campos del formulario generados por Django */
+    form select,
+    form input[type="text"],
+    form input[type="datetime-local"],
+    form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background-color: #f9fafb;
+    }
+
+    form select:focus,
+    form input[type="text"]:focus,
+    form input[type="datetime-local"]:focus,
+    form textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    form textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Hover effects */
+    form select:hover,
+    form input:hover,
+    form textarea:hover {
+        border-color: #cbd5e1;
+    }
+</style>
 
 {% endblock %}
