@@ -1,6 +1,20 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
+from .models import *
+from .forms import *
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
+from django.contrib.auth import update_session_auth_hash
+
 
 
 def crear_notificacion(usuario, mensaje):
@@ -21,24 +35,9 @@ def crear_notificacion(usuario, mensaje):
             print("❌ Error enviando correo:", e)
 
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as auth_login, logout
-from django.contrib import messages
-from django.contrib.auth.models import Group
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
-from .models import *
-from .forms import *
-from django.utils.timezone import make_aware
-from datetime import datetime, timedelta
-
-
-
-
-# --- PÁGINAS PRINCIPALES ---
+# ======================================================
+# ================= PÁGINAS PRINCIPALES ================
+# ======================================================
 def inicio(request):
     doctores = Usuario.objects.all()
     print("Función inicio-llamar doctores, llamada exitosamente.")
@@ -48,6 +47,8 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Cierre de sesión exitoso.")
     return redirect('inicio')
+# Permite logout por GET
+LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
 
 def test(request):
     doctores = Usuario.objects.all()
@@ -57,13 +58,6 @@ def test(request):
 def datos_personales(request):
     usuarios = Usuario.objects.all()
     return render(request, 'gestor/datos_personales.html', {'usuarios':usuarios})
-
-
-
-
-# Permite logout por GET
-LOGOUT_REDIRECT_URL = 'inicio'  # o 'inicio' si tienes nombre de URL
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -94,12 +88,6 @@ def login_view(request):
 def reservas(request):
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/reservar-cita.html', {'citas': citas})
-
-
-'''def portal_pacientes(request):
-    citas = CitaMedica.objects.all()
-    return render(request,'gestor/portal_pacientes.html', {'citas': citas})
-'''
 
 def portal_pacientes(request):
 
@@ -136,13 +124,13 @@ def portal_pacientes(request):
         "modo": "sin_autenticacion"
     })
 
-
 @login_required
 def portal_doctores(request):
     doctores = Usuario.objects.all()
     citas = CitaMedica.objects.all()
     return render(request, 'gestor/portal_doctores.html', {'doctores': doctores, 'citas': citas})
 
+@login_required
 def lista_pacientes(request):
     usuarios = Usuario.objects.all()
     return render(request, 'gestor/lista_pacientes.html', {'usuarios':usuarios})
@@ -152,7 +140,13 @@ def lista_doctores(request):
     return render(request, 'gestor/lista_doctores.html', {'usuarios':usuarios})
 
 
-# --- REGISTRO DE USUARIOS ---
+
+
+
+
+# ======================================================
+# =================== CRUD USUARIOS ====================
+# ======================================================
 def registro_usuario(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -170,9 +164,6 @@ def registro_usuario(request):
         form = RegistroForm()
     return render(request, 'gestor/registro.html', {'form': form})
 
-
-
-
 @login_required
 def editar_perfil(request):
     usuario = request.user
@@ -187,6 +178,28 @@ def editar_perfil(request):
         form = UsuarioUpdateForm(instance=usuario)
 
     return render(request, "gestor/editar_perfil.html", {"form": form})
+
+@login_required
+def cambiar_password(request):
+    if request.method == 'POST':
+        p1 = request.POST['password1']
+        p2 = request.POST['password2']
+
+        if p1 != p2:
+            return render(request, 'cambiar_password.html', {
+                'error': 'Las contraseñas no coinciden'
+            })
+
+        request.user.set_password(p1)
+        request.user.debe_cambiar_password = False
+        request.user.save()
+
+        update_session_auth_hash(request, request.user)
+        return redirect('portal_pacientes')
+
+    return render(request, 'cambiar_password.html')
+
+
 
 
 
@@ -232,10 +245,7 @@ def eliminar_paciente(request, id):
         return redirect('listar_pacientes')
     return render(request, 'gestor/paciente_confirm_delete.html', {'paciente': paciente})
 
-
-# ======================================================
 # =================== CRUD DOCTORES ====================
-# ======================================================
 #@login_required
 def listar_doctores(request):
     doctores = Usuario.objects.all()
@@ -276,10 +286,16 @@ def eliminar_doctor(request, id):
     return render(request, 'gestor/doctor_confirm_delete.html', {'doctor': doctor})
 
 
+
+
+
+
+
+
+
 # ======================================================
 # =================== CRUD CITAS =======================
 # ======================================================
-#@login_required
 def listar_citas(request):
     print("Función listar_citas llamada exitosamente.")
     citas = CitaMedica.objects.all()
@@ -301,7 +317,6 @@ def crear_cita(request):
     else:
         form = CitaMedicaForm()
     return render(request, 'gestor/cita_form.html', {'form': form})
-
 
 @login_required
 def editar_cita(request, id_cita):
@@ -334,8 +349,6 @@ def editar_cita(request, id_cita):
 
     return render(request, "gestor/editar_cita.html", {"form": form, "cita": cita})
 
-
-
 @login_required
 def eliminar_cita(request, id_cita):
     cita = get_object_or_404(CitaMedica, id_cita=id_cita)
@@ -348,7 +361,6 @@ def eliminar_cita(request, id_cita):
 
     messages.success(request, "La cita fue eliminada correctamente.")
     return redirect('portal_pacientes')
-
 
 def guardar_solicitud_cita(request):
     if request.method == "POST":
@@ -370,29 +382,6 @@ def guardar_solicitud_cita(request):
     
     return JsonResponse({"success": False, "message": "Método no permitido."})
 
-
-
-'''
-def confirmar_cita(request, cita_id):
-    cita = get_object_or_404(CitaMedica, id_cita=cita_id)
-
-    if request.user != cita.doctor:
-        return JsonResponse({"error": "No autorizado"}, status=403)
-
-    fecha_hora = cita.fecha_hora
-
-    # Validación principal
-    if not doctor_disponible(cita.doctor, fecha_hora):
-        return JsonResponse({
-            "ok": False,
-            "message": "No puedes confirmar esta cita: está fuera de horario o se cruza con otra."
-        })
-
-    cita.estado = "confirmada"
-    cita.save()
-
-    return JsonResponse({"ok": True, "message": "Cita confirmada exitosamente."})
-'''
 @login_required
 def confirmar_cita(request, cita_id):
     if request.method != "POST":
@@ -407,7 +396,6 @@ def confirmar_cita(request, cita_id):
     cita.save()
 
     return JsonResponse({"message": "Cita confirmada correctamente"})
-
 
 @login_required
 def finalizar_cita(request, cita_id):
@@ -424,8 +412,6 @@ def finalizar_cita(request, cita_id):
 
     return JsonResponse({"message": "Cita finalizada correctamente"})
 
-
-
 @login_required
 def cancelar_cita(request, id_cita):
     cita = get_object_or_404(CitaMedica, id_cita=id_cita)
@@ -439,9 +425,6 @@ def cancelar_cita(request, id_cita):
 
     messages.success(request, "La cita fue cancelada correctamente.")
     return redirect('portal_pacientes')
-
-
-
 
 def crear_reserva(request):
 
@@ -483,28 +466,43 @@ def crear_reserva(request):
             }
         )
 
+        if created:
+            # Como no quiere CREAR CUENTA, le creamos una contraseña temporal (el rut sin puntos ni guiones)
+            rut_limpio = rut.replace('.', '').replace('-', '')
+            paciente.set_password(rut_limpio)
+            paciente.debe_cambiar_password = True
+            paciente.save()
+
+
     # ============================================
     # 3. DATOS DE LA CITA
     # ============================================
     especialidad = request.POST.get('especialidad')
-    doctor_rut = request.POST.get('doctor')
+    doctor_id = request.POST.get('doctor')
     fecha = request.POST.get('fecha')
     hora = request.POST.get('hora')
     notas = request.POST.get('notas')
 
     # ============================================
-    # 4. OBTENER DOCTOR (Usuario del grupo Doctores)
+    # 4. OBTENER DOCTOR SELECCIONADO
     # ============================================
-    if doctor_rut:
-        doctor = Usuario.objects.filter(
-            rut=doctor_rut,
-            groups__name='Doctores'
-        ).first()
-    else:
-        doctor = Usuario.objects.filter(groups__name='Doctores').first()
+    if not doctor_id:
+        print("NOT DOCTOR_RUT")
+        return JsonResponse({"success": False, "message": "Debe seleccionar un doctor."})
+
+    doctor = Usuario.objects.filter(
+        id=doctor_id
+    ).exclude(
+        especialidad__isnull=True
+    ).exclude(
+        especialidad=''
+    ).first()
+    print(f"Doctor: {doctor}")
 
     if not doctor:
+        print("NOT DOCTORCITO")
         return JsonResponse({"success": False, "message": "No hay doctores disponibles."})
+
 
     # ============================================
     # 5. CONVERTIR fecha + hora A DATETIME REAL
@@ -576,8 +574,9 @@ def eliminar_receta(request, id):
 
 
 
-# SOLICITUDES de citas médicas
-
+# ======================================================
+# ================ SOLICITUDES de citas ================
+# ======================================================
 def listar_solicitudes(request):
     print("Función listar_solicitudes llamada exitosamente.")
     solicitudes = SolicitudCita.objects.all()

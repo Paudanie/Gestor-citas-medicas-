@@ -87,17 +87,20 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     fecha_nac = models.DateField()
     telefono = models.IntegerField()
     direccion = models.CharField(max_length=100)
+    enfermedades = models.ManyToManyField(Enfermedad, blank=True)
+    discapacidades = models.ManyToManyField(Discapacidad, blank=True)
     # Solo doctores (opcional)
     especialidad = models.CharField(max_length=50, blank=True, null=True)
 
-    # Solo pacientes (opcional)
-    enfermedades = models.ManyToManyField(Enfermedad, blank=True)
+    # Se le asigna a cada usuario una contraseña temporal (rut sin guión ni puntos)
+    # Por defecto, debe cambiar su contraseña la primera vez que inicie sesión.
+    debe_cambiar_password = models.BooleanField(default=True)
 
-    # Si quieres mantener discapacidades
-    discapacidades = models.ManyToManyField(Discapacidad, blank=True)
 
     def __str__(self):
-        return f"{self.rut}"
+        if self.especialidad:
+            return f"{self.first_name} {self.last_name} — {self.especialidad}"
+        return f"{self.first_name} {self.last_name}"    
 
     groups = models.ManyToManyField(
         'auth.Group',

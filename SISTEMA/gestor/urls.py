@@ -9,6 +9,7 @@ urlpatterns = [
     # --- PÁGINAS PRINCIPALES ---
     path('', views.inicio, name='inicio'),
     path('login/', views.login_view, name='login'),
+    path('cambiar_password/', views.cambiar_password, name='cambiar_password'),
     path('reservas/', views.reservas, name='reservas'),
     path('datos_personales/', views.datos_personales, name='datos_personales'),
     path('portal_pacientes/', views.portal_pacientes, name='portal_pacientes'),
@@ -19,25 +20,23 @@ urlpatterns = [
 
 
     path('test/', views.test, name='test'),
-    #path('portal_pacientes', views.portalPacientes, name='citas'),
 
     # ======================================================
-    # =================== PACIENTES ========================
+    # ==================== USUARIOS ========================
     # ======================================================
-    #path('pacientes/', views.listar_pacientes, name='listar_pacientes'),
+    path('lista_doctores/', views.lista_doctores, name='lista_doctores'),
+
+
+    # =================== PACIENTES ========================
     path('pacientes/crear/', views.crear_paciente, name='crear_paciente'),
     path('pacientes/editar/<int:id>/', views.editar_paciente, name='editar_paciente'),
     path('pacientes/eliminar/<int:id>/', views.eliminar_paciente, name='eliminar_paciente'),
 
-    # ======================================================
     # =================== DOCTORES =========================
-    # ======================================================
-    #path('doctores/', views.listar_doctores, name='listar_doctores'),
     path('doctores/crear/', views.crear_doctor, name='crear_doctor'),
     path('doctores/editar/<int:id>/', views.editar_doctor, name='editar_doctor'),
     path('doctores/eliminar/<int:id>/', views.eliminar_doctor, name='eliminar_doctor'),
     path('lista_pacientes/', views.lista_pacientes, name='lista_pacientes'),
-    path('lista_doctores/', views.lista_doctores, name='lista_doctores'),
 
     # ======================================================
     # =================== CITAS MÉDICAS ====================
@@ -58,7 +57,8 @@ urlpatterns = [
     path("cita/<str:id_cita>/editar/", views.editar_cita, name="editar_cita"),
     path("cita/<str:id_cita>/eliminar/", views.eliminar_cita, name="eliminar_cita"),
 
-
+    # ================= SOLICITUDES ========================
+    path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),    
 
     # ======================================================
     # =================== RECETAS ==========================
@@ -67,10 +67,7 @@ urlpatterns = [
     path('recetas/crear/', views.crear_receta, name='crear_receta'),
     path('recetas/editar/<int:id>/', views.editar_receta, name='editar_receta'),
     path('recetas/eliminar/<int:id>/', views.eliminar_receta, name='eliminar_receta'),
-    # ======================================================
-    # ================= SOLICITUDES ========================
-    # ======================================================
-    path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),    
+    
 ]
 
 

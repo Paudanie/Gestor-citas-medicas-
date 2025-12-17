@@ -124,6 +124,14 @@ class CitaMedicaForm(forms.ModelForm):
         model = CitaMedica
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['doctor'].queryset = Usuario.objects.exclude(
+                especialidad__isnull=True
+            ).exclude(
+                especialidad=''
+            )
+        
 class CitaEditForm(forms.ModelForm):
     class Meta:
         model = CitaMedica
@@ -131,6 +139,15 @@ class CitaEditForm(forms.ModelForm):
         widgets = {
             "fecha_hora": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['doctor'].queryset = Usuario.objects.exclude(
+                especialidad__isnull=True
+            ).exclude(
+                especialidad=''
+            )
+    
 
 
 

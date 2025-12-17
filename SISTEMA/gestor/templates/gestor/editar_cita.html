@@ -19,12 +19,13 @@
 
         <!-- CAMPO DOCTOR -->
         <div class="mb-4">
-            <label class="block font-semibold mb-1">Doctor</label>
-            {{ form.doctor }}
+            
+                <label class="block font-semibold mb-1">Doctor</label>
+                {{ form.doctor }}
 
-            {% for error in form.doctor.errors %}
-                <p class="text-red-600 text-sm">{{ error }}</p>
-            {% endfor %}
+                {% for error in form.doctor.errors %}
+                    <p class="text-red-600 text-sm">{{ error }}</p>
+                {% endfor %}
         </div>
 
         <!-- CAMPO FECHA HORA -->
