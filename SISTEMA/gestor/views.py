@@ -14,6 +14,8 @@ from .forms import *
 from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Prefetch
+
 
 
 
@@ -132,7 +134,8 @@ def portal_doctores(request):
 
 @login_required
 def lista_pacientes(request):
-    usuarios = Usuario.objects.all()
+    usuarios = Usuario.objects.prefetch_related(Prefetch('recetas_recibidas',queryset=Receta.objects.order_by('-fecha_emision')))
+
     return render(request, 'gestor/lista_pacientes.html', {'usuarios':usuarios})
 
 def lista_doctores(request):
@@ -538,7 +541,7 @@ def listar_recetas(request):
     recetas = Receta.objects.all()
     return render(request, 'gestor/recetas_list.html', {'recetas': recetas})
 
-@login_required
+'''@login_required
 def crear_receta(request):
     if request.method == 'POST':
         form = RecetaForm(request.POST)
@@ -549,7 +552,7 @@ def crear_receta(request):
     else:
         form = RecetaForm()
     return render(request, 'gestor/receta_form.html', {'form': form})
-
+'''
 @login_required
 def editar_receta(request, id):
     receta = get_object_or_404(Receta, id=id)
@@ -571,6 +574,35 @@ def eliminar_receta(request, id):
         messages.success(request, 'Receta eliminada correctamente.')
         return redirect('listar_recetas')
     return render(request, 'gestor/receta_confirm_delete.html', {'receta': receta})
+
+@login_required
+def crear_receta_desde_cita(request, id_cita):
+    cita = get_object_or_404(CitaMedica, id_cita=id_cita)
+
+    # Seguridad: solo el doctor de la cita
+    if request.user != cita.doctor:
+        return HttpResponse("No autorizado", status=403)
+
+    if request.method == "POST":
+        form = RecetaForm(request.POST)
+        if form.is_valid():
+            receta = form.save(commit=False)
+            receta.id_receta = f"REC_{timezone.now().strftime('%Y%m%d%H%M%S')}"
+            receta.doctor = cita.doctor
+            receta.paciente = cita.paciente
+            receta.cita = cita
+            receta.save()
+            form.save_m2m()
+
+            messages.success(request, "Receta creada correctamente.")
+            return redirect("portal_doctores")
+    else:
+        form = RecetaForm()
+
+    return render(request, "gestor/receta_form.html", {
+        "form": form,
+        "cita": cita
+    })
 
 
 

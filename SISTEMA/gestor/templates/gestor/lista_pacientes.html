@@ -73,29 +73,35 @@ Lista de Usuarios (pacientes y doctores)
     <div class="mt-10">
         <h2 class="text-xl font-semibold mb-4">Recetas Médicas</h2>
 
-        {% if recetas %}
+        {% if usuario.recetas_recibidas.exists %}
             <div class="space-y-4">
-                {% for receta in recetas %}
-                <div class="border p-4 rounded shadow-sm bg-gray-50">
-                    <p><strong>Médico:</strong> {{ receta.doctor.first_name }} {{ receta.doctor.last_name }}</p>
-                    <p><strong>Fecha emisión:</strong> {{ receta.fecha_emision }}</p>
-                    <p><strong>Medicamento:</strong> {{ receta.medicamento }}</p>
+                {% for receta in usuario.recetas_recibidas.all %}
+                    <div class="border p-4 rounded-lg bg-gray-50">
 
-                    {% if receta.indicaciones %}
-                    <p><strong>Indicaciones:</strong> {{ receta.indicaciones }}</p>
-                    {% endif %}
+                        <p>
+                            <strong>Médico:</strong>
+                            {{ receta.doctor.first_name }} {{ receta.doctor.last_name }}
+                        </p>
 
-                    {% if receta.duracion_tratamiento %}
-                    <p><strong>Duración del tratamiento:</strong> {{ receta.duracion_tratamiento }} días</p>
-                    {% endif %}
-                </div>
+                        <p>
+                            <strong>Fecha emisión:</strong>
+                            {{ receta.fecha_emision }}
+                        </p>
+
+                        {% if receta.indicaciones %}
+                            <p class="mt-2">
+                                <strong>Indicaciones:</strong>
+                                {{ receta.indicaciones }}
+                            </p>
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
-
         {% else %}
             <p class="text-gray-600">No registra recetas prescritas.</p>
         {% endif %}
     </div>
+
 
 </div>
 

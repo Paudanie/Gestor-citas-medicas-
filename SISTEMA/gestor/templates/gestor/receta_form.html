@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}MediCare · Crear Receta{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md border border-gray-200">
+
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-900">
+                Crear Receta Médica
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">
+                Paciente:
+                <span class="font-medium text-medical-primary">
+                    {{ cita.paciente.get_full_name }}
+                </span>
+                · Cita {{ cita.fecha_hora|date:"d/m/Y H:i" }}
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="px-6 py-6 space-y-6">
+            {% csrf_token %}
+
+            <!-- Tratamientos -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Tratamientos prescritos
+                </label>
+                {{ form.tratamiento }}
+                <p class="text-xs text-gray-500 mt-1">
+                    Mantén presionado Ctrl (Cmd en Mac) para seleccionar varios
+                </p>
+            </div>
+
+            <!-- Indicaciones -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Indicaciones adicionales
+                </label>
+                {{ form.indicaciones }}
+            </div>
+
+            <!-- Fechas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Fecha de emisión
+                    </label>
+                    {{ form.fecha_emision }}
+                </div>
+
+                <div>
+                    <label class="block text-sm rounded-lg font-medium text-gray-700 mb-1">
+                        Vigente hasta
+                    </label>
+                    {{ form.vigente_hasta }}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                <a href="{% url 'portal_doctores' %}"
+                   class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">
+                    Guardar Receta
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

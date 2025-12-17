@@ -149,9 +149,69 @@ class CitaEditForm(forms.ModelForm):
             )
     
 
-
-
 class RecetaForm(forms.ModelForm):
+    class Meta:
+        model = Receta
+        exclude = ['doctor', 'paciente', 'cita', 'id_receta']
+        widgets = {
+
+            # 🔹 MULTISELECT TRATAMIENTOS
+            'tratamiento': forms.SelectMultiple(
+                attrs={
+                    'class': (
+                        'w-full rounded-lg border border-gray-300 '
+                        'focus:border-medical-primary focus:ring-medical-primary '
+                        'px-3 py-2'
+                    ),
+                    'size': 5
+                }
+            ),
+
+            # 🔹 TEXTAREA CON BORDE VISIBLE
+            'indicaciones': forms.Textarea(
+                attrs={
+                    'class': (
+                        'w-full rounded-lg border border-gray-300 '
+                        'focus:border-medical-primary focus:ring-medical-primary '
+                        'px-3 py-2'
+                    ),
+                    'rows': 4,
+                    'placeholder': 'Indicaciones especiales, precauciones, observaciones...'
+                }
+            ),
+
+            # 🔹 FECHA (CALENDARIO NATIVO)
+            'fecha_emision': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': (
+                        'w-full rounded-lg border border-gray-300 '
+                        'focus:border-medical-primary focus:ring-medical-primary '
+                        'px-3 py-2'
+                    )
+                }
+            ),
+
+            'vigente_hasta': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': (
+                        'w-full rounded-lg border border-gray-300 '
+                        'focus:border-medical-primary focus:ring-medical-primary '
+                        'px-3 py-2'
+                    )
+                }
+            ),
+        }
+
+'''
+class RecetaForm(forms.ModelForm):
+    class Meta:
+        model = Receta
+        exclude = ['doctor', 'paciente', 'cita', 'id_receta']
+'''
+
+'''class RecetaForm(forms.ModelForm):
     tratamiento = forms.ModelMultipleChoiceField(
         queryset=Tratamiento.objects.all(),
         widget=forms.CheckboxSelectMultiple
@@ -166,7 +226,7 @@ class RecetaForm(forms.ModelForm):
     class Meta:
         model = Receta
         fields = '__all__'
-
+'''
 class HistorialAsistenciaForm(forms.ModelForm):
     class Meta:
         model = HistorialAsistencia

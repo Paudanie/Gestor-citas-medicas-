@@ -218,8 +218,7 @@ class Receta(models.Model):
     )
 
     cita = models.ForeignKey('CitaMedica', on_delete=models.CASCADE)
-    tratamiento = models.ManyToManyField(Tratamiento)
-    indicaciones_extra = models.CharField(max_length=200)
+    indicaciones = models.CharField(max_length=200)
     fecha_emision = models.DateField()
     vigente_hasta = models.DateField()
 

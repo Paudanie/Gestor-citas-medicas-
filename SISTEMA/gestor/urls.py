@@ -57,6 +57,8 @@ urlpatterns = [
     path("cita/<str:id_cita>/editar/", views.editar_cita, name="editar_cita"),
     path("cita/<str:id_cita>/eliminar/", views.eliminar_cita, name="eliminar_cita"),
 
+
+
     # ================= SOLICITUDES ========================
     path('solicitudes/', views.listar_solicitudes, name='listar_solicitudes'),    
 
@@ -64,10 +66,11 @@ urlpatterns = [
     # =================== RECETAS ==========================
     # ======================================================
     path('recetas/', views.listar_recetas, name='listar_recetas'),
-    path('recetas/crear/', views.crear_receta, name='crear_receta'),
+    #path('recetas/crear/', views.crear_receta, name='crear_receta'),
     path('recetas/editar/<int:id>/', views.editar_receta, name='editar_receta'),
     path('recetas/eliminar/<int:id>/', views.eliminar_receta, name='eliminar_receta'),
-    
+    path('recetas/crear/<str:id_cita>/', views.crear_receta_desde_cita, name='crear_receta_desde_cita'),
+
 ]
 
 
