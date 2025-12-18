@@ -1,0 +1,25 @@
+<h2 class="text-xl font-bold mb-4">
+    {{ titulo }} de {{ paciente.get_full_name }}
+</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="space-y-2">
+        {% for item in items %}
+        <label class="flex items-center gap-2">
+            <input
+                type="checkbox"
+                name="items"
+                value="{{ item.id }}"
+                {% if item in seleccionados %}checked{% endif %}
+            >
+            {{ item.nombre }}
+        </label>
+        {% endfor %}
+    </div>
+
+    <button class="mt-4 px-4 py-2 bg-medical-primary text-white rounded">
+        Guardar
+    </button>
+</form>

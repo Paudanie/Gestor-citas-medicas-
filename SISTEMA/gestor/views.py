@@ -15,6 +15,10 @@ from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Prefetch
+from django.contrib.auth.decorators import user_passes_test
+
+def es_doctor(user):
+    return bool(user.especialidad)
 
 
 
@@ -266,6 +270,45 @@ def detalle_paciente(request, rut):
         "citas": citas,
         "modo": "detalle"
     })
+
+# ENFERMEDADES Y DISCAPACIDADES
+@login_required
+@user_passes_test(es_doctor)
+
+def editar_atributo_paciente(request, rut, tipo):
+    if not es_doctor(request.user):
+        return HttpResponse("No autorizado", status=403)
+    
+    
+    paciente = get_object_or_404(Usuario, rut=rut)
+
+    if tipo == "enfermedades":
+        Model = Enfermedad
+        relacion = paciente.enfermedades
+        titulo = "Enfermedades"
+    elif tipo == "discapacidades":
+        Model = Discapacidad
+        relacion = paciente.discapacidades
+        titulo = "Discapacidades"
+    else:
+        return HttpResponse("Tipo inválido", status=400)
+
+    if request.method == "POST":
+        ids = request.POST.getlist("items")
+        relacion.set(ids)
+        return redirect("portal_doctores")
+
+    items = Model.objects.all()
+
+    return render(request, "gestor/editar_atributos.html", {
+        "paciente": paciente,
+        "items": items,
+        "seleccionados": relacion.all(),
+        "titulo": titulo,
+        "tipo": tipo,
+    })
+
+
 
 
 # =================== CRUD DOCTORES ====================
