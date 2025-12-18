@@ -23,12 +23,12 @@ class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
         fields = '__all__'
-
+'''
 class TratamientoForm(forms.ModelForm):
     class Meta:
         model = Tratamiento
         fields = '__all__'
-
+'''
 
 
 # ---- PERSONAS ----

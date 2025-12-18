@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}MediCare · Crear Receta{% endblock %}
+{% block title %}
+MediCare · {% if receta %}Editar Receta{% else %}Crear Receta{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-10 px-4">
     <div class="max-w-4xl mx-auto">
-        
+
         <!-- Header Card -->
         <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-t-2xl shadow-lg p-6 text-white">
             <div class="flex items-center gap-3">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <div>
-                    <h2 class="text-2xl font-bold">Crear Receta Médica</h2>
+                    <h2 class="text-2xl font-bold">
+                        {% if receta %}Editar Receta Médica{% else %}Crear Receta Médica{% endif %}
+                    </h2>
                     <p class="text-purple-100 text-sm mt-1">
                         Paciente: <span class="font-semibold">{{ cita.paciente.get_full_name }}</span>
                         · Cita {{ cita.fecha_hora|date:"d/m/Y H:i" }}
@@ -22,127 +27,109 @@
             </div>
         </div>
 
+        <!-- Estado anulada -->
+        {% if receta and not receta.activa %}
+        <div class="bg-red-100 border border-red-300 text-red-800 px-6 py-4 rounded-none">
+            ⚠️ Esta receta está <strong>ANULADA</strong>. Solo puede visualizarse.
+        </div>
+        {% endif %}
+
         <!-- Form Card -->
         <div class="bg-white rounded-b-2xl shadow-lg border border-gray-200">
             <form method="post" class="p-8 space-y-8">
                 {% csrf_token %}
-
-                <!-- Indicaciones Section -->
+                <!-- Indicaciones -->
                 <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-6 border border-teal-200">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-teal-500 rounded-full p-2">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-                            </svg>
-                        </div>
-                        <label class="text-lg font-semibold text-gray-800">
-                            Indicaciones para el paciente
-                        </label>
-                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        Indicaciones
+                    </h3>
                     {{ form.indicaciones }}
-                    <p class="text-xs text-cyan-600 mt-2">
-                        Instrucciones detalladas para el paciente sobre cómo seguir el tratamiento
-                    </p>
                 </div>
 
-
-                <!-- Fechas Section -->
+                <!-- Fechas -->
                 <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-purple-500 rounded-full p-2">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800">Vigencia de la Receta</h3>
-                    </div>
-                    
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        Vigencia de la receta
+                    </h3>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <label class="text-sm font-medium text-gray-700">
-                                    Fecha de emisión
-                                </label>
-                            </div>
+                            <label class="text-sm font-medium text-gray-700">
+                                Fecha de emisión
+                            </label>
                             {{ form.fecha_emision }}
                         </div>
 
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <label class="text-sm font-medium text-gray-700">
-                                    Vigente hasta
-                                </label>
-                            </div>
+                            <label class="text-sm font-medium text-gray-700">
+                                Vigente hasta
+                            </label>
                             {{ form.vigente_hasta }}
                         </div>
                     </div>
                 </div>
 
-                <!-- Actions -->
-                <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                <!-- Acciones -->
+                <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+
                     <a href="{% url 'portal_doctores' %}"
-                       class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                       class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-medium hover:bg-gray-50">
                         Cancelar
                     </a>
 
-                    <button type="submit"
-                            class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        Guardar Receta
-                    </button>
+                    <div class="flex gap-3">
+
+                        {% if receta and receta.activa %}
+                        <!-- ANULAR -->
+                        <button type="button"
+                                onclick="confirmarAnulacion()"
+                                class="px-6 py-3 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700">
+                            Anular receta
+                        </button>
+                        {% endif %}
+
+                        {% if not receta or receta.activa %}
+                        <!-- GUARDAR -->
+                        <button type="submit"
+                                class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:scale-105 transition">
+                            Guardar receta
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
             </form>
+
+            {% if receta %}
+            <!-- FORM OCULTO PARA ANULAR -->
+            <form id="form-anular"
+                  method="post"
+                  action="{% url 'eliminar_receta' receta.id %}">
+                {% csrf_token %}
+            </form>
+            {% endif %}
         </div>
 
     </div>
 </div>
 
+<script>
+function confirmarAnulacion() {
+    if (confirm("¿Estás seguro de ANULAR esta receta?\n\nEsta acción no se puede deshacer.")) {
+        document.getElementById("form-anular").submit();
+    }
+}
+</script>
+
 <style>
-    /* Estilos para los campos del formulario */
-    select[multiple], textarea, input[type="date"] {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid #e5e7eb;
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        background-color: white;
-    }
-    
-    select[multiple] {
-        min-height: 200px;
-    }
-    
-    textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-    
-    select[multiple]:focus, textarea:focus, input[type="date"]:focus {
-        outline: none;
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-    }
-    
-    select[multiple]:hover, textarea:hover, input[type="date"]:hover {
-        border-color: #c4b5fd;
-    }
-    
-    /* Estilo para las opciones seleccionadas */
-    select[multiple] option:checked {
-        background: linear-gradient(to right, #8b5cf6, #6366f1);
-        color: white;
-    }
+select[multiple], textarea, input[type="date"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+}
+select[multiple] { min-height: 180px; }
+textarea { min-height: 120px; }
 </style>
+
 {% endblock %}

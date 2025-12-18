@@ -6,6 +6,9 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import time
+from django.contrib.auth.hashers import make_password
+
+
 
 
 
@@ -30,7 +33,7 @@ class Horario(models.Model):
     def __str__(self):
         return self.fechaHora
     
-
+'''
 class Tratamiento(models.Model):
     medicamento = models.CharField(max_length=50)
     dosis = models.CharField(max_length=20)
@@ -38,7 +41,7 @@ class Tratamiento(models.Model):
 
     def __str__(self):
         return f"{self.medicamento} {self.dosis}"
-
+'''
 def validar_rut(rut):
     # Normalizar
     rut = rut.replace(".", "").replace("-", "").upper()
@@ -118,15 +121,22 @@ class Usuario(AbstractUser): #Al usar AbstractUser, ya tenemos el nombre de usua
     )
 
     def save(self, *args, **kwargs):
-        self.rut = self.rut.replace(".", "").replace("-", "").upper()
+        update_fields = kwargs.get("update_fields")
 
-        if self.pk is None and self.password:
-            # Si ya viene con password plano, hashearlo
-            from django.contrib.auth.hashers import make_password
+        # SOLO hashear password cuando:
+        # - es un usuario nuevo
+        # - o se está guardando explícitamente el campo password
+        if (
+            self.pk is None
+            or (update_fields and "password" in update_fields)
+        ) and self.password and not self.password.startswith("pbkdf2_"):
             self.password = make_password(self.password)
 
         super().save(*args, **kwargs)
 
+    @property
+    def es_doctor(self):
+        return bool(self.especialidad and self.especialidad.strip())
 
     
 
@@ -224,6 +234,8 @@ class Receta(models.Model):
     indicaciones = models.CharField(max_length=200)
     fecha_emision = models.DateField()
     vigente_hasta = models.DateField()
+    activa = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"Receta {self.id_receta} - {self.paciente}"

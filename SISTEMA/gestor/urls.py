@@ -70,7 +70,7 @@ urlpatterns = [
     # ======================================================
     # =================== RECETAS ==========================
     # ======================================================
-    path('recetas/', views.listar_recetas, name='listar_recetas'),
+    path('recetas/', views.lista_pacientes, name='lista_pacientes'),
     #path('recetas/crear/', views.crear_receta, name='crear_receta'),
     path('recetas/editar/<int:id>/', views.editar_receta, name='editar_receta'),
     path('recetas/eliminar/<int:id>/', views.eliminar_receta, name='eliminar_receta'),

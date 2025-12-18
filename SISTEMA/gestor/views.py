@@ -557,17 +557,15 @@ def crear_reserva(request):
         return JsonResponse({"success": False, "message": "Debe seleccionar un doctor."})
 
     doctor = Usuario.objects.filter(
-        id=doctor_id
-    ).exclude(
-        especialidad__isnull=True
-    ).exclude(
-        especialidad=''
+        rut=doctor_id,
+        especialidad__isnull=False
     ).first()
+
     print(f"Doctor: {doctor}")
 
-    if not doctor:
-        print("NOT DOCTORCITO")
+    if not doctor or not doctor.es_doctor:
         return JsonResponse({"success": False, "message": "No hay doctores disponibles."})
+
 
 
     # ============================================
@@ -602,7 +600,7 @@ def crear_reserva(request):
 @login_required
 def listar_recetas(request):
     recetas = Receta.objects.all()
-    return render(request, 'gestor/recetas_list.html', {'recetas': recetas})
+    return render(request, 'gestor/lista_pacientes.html', {'recetas': recetas})
 
 '''@login_required
 def crear_receta(request):
@@ -616,30 +614,44 @@ def crear_receta(request):
         form = RecetaForm()
     return render(request, 'gestor/receta_form.html', {'form': form})
 '''
+
 @login_required
+@user_passes_test(es_doctor)
 def editar_receta(request, id):
     receta = get_object_or_404(Receta, id=id)
+
+    if not receta.activa:
+        messages.error(request, "No se puede editar una receta anulada.")
+        return redirect('lista_pacientes')
+
     if request.method == 'POST':
         form = RecetaForm(request.POST, instance=receta)
         if form.is_valid():
             form.save()
             messages.success(request, 'Receta actualizada correctamente.')
-            return redirect('listar_recetas')
+            return redirect('lista_pacientes')
     else:
         form = RecetaForm(instance=receta)
+
     return render(request, 'gestor/receta_form.html', {'form': form})
 
 @login_required
+@user_passes_test(es_doctor)
 def eliminar_receta(request, id):
     receta = get_object_or_404(Receta, id=id)
+
     if request.method == 'POST':
-        receta.delete()
-        messages.success(request, 'Receta eliminada correctamente.')
-        return redirect('listar_recetas')
+        receta.activa = False
+        receta.save()
+        messages.success(request, 'Receta anulada correctamente.')
+        return redirect('lista_pacientes')
+
     return render(request, 'gestor/receta_confirm_delete.html', {'receta': receta})
 
 @login_required
+@user_passes_test(es_doctor)
 def crear_receta_desde_cita(request, id_cita):
+    cita_id = request.GET.get("cita")
     cita = get_object_or_404(CitaMedica, id_cita=id_cita)
 
     # Seguridad: solo el doctor de la cita
