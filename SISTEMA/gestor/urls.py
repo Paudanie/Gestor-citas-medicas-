@@ -31,6 +31,8 @@ urlpatterns = [
     path('pacientes/crear/', views.crear_paciente, name='crear_paciente'),
     path('pacientes/editar/<int:id>/', views.editar_paciente, name='editar_paciente'),
     path('pacientes/eliminar/<int:id>/', views.eliminar_paciente, name='eliminar_paciente'),
+    path("pacientes/<str:rut>/", views.detalle_paciente, name="detalle_paciente"),
+
 
     # =================== DOCTORES =========================
     path('doctores/crear/', views.crear_doctor, name='crear_doctor'),

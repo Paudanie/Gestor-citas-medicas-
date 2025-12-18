@@ -155,18 +155,7 @@ class RecetaForm(forms.ModelForm):
         exclude = ['doctor', 'paciente', 'cita', 'id_receta']
         widgets = {
 
-            # 🔹 MULTISELECT TRATAMIENTOS
-            'tratamiento': forms.SelectMultiple(
-                attrs={
-                    'class': (
-                        'w-full rounded-lg border border-gray-300 '
-                        'focus:border-medical-primary focus:ring-medical-primary '
-                        'px-3 py-2'
-                    ),
-                    'size': 5
-                }
-            ),
-
+           
             # 🔹 TEXTAREA CON BORDE VISIBLE
             'indicaciones': forms.Textarea(
                 attrs={
@@ -176,7 +165,7 @@ class RecetaForm(forms.ModelForm):
                         'px-3 py-2'
                     ),
                     'rows': 4,
-                    'placeholder': 'Indicaciones especiales, precauciones, observaciones...'
+                    'placeholder': 'Tratamientos, prescripciones de medicamentos, dosis, frecuencia, duración, etc.'
                 }
             ),
 

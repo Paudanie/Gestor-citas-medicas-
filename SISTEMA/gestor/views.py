@@ -129,7 +129,12 @@ def portal_pacientes(request):
 @login_required
 def portal_doctores(request):
     doctores = Usuario.objects.all()
-    citas = CitaMedica.objects.all()
+    citas = (
+        CitaMedica.objects
+        .filter(doctor=request.user)
+        .order_by('fecha_hora')
+    )
+
     return render(request, 'gestor/portal_doctores.html', {'doctores': doctores, 'citas': citas})
 
 @login_required
@@ -247,6 +252,21 @@ def eliminar_paciente(request, id):
         messages.success(request, 'Usuario eliminado correctamente.')
         return redirect('listar_pacientes')
     return render(request, 'gestor/paciente_confirm_delete.html', {'paciente': paciente})
+
+@login_required
+def detalle_paciente(request, rut):
+    paciente = get_object_or_404(Usuario, rut=rut)
+
+    recetas = Receta.objects.filter(paciente=paciente).select_related("doctor", "cita")
+    citas = CitaMedica.objects.filter(paciente=paciente).order_by("fecha_hora")
+
+    return render(request, "gestor/lista_pacientes.html", {
+        "paciente": paciente,
+        "recetas": recetas,
+        "citas": citas,
+        "modo": "detalle"
+    })
+
 
 # =================== CRUD DOCTORES ====================
 #@login_required

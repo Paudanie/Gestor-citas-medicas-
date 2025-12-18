@@ -10,101 +10,183 @@ Lista de Usuarios (pacientes y doctores)
 
 {% block content %}
 
-{% for usuario in usuarios %}
-<div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded shadow">
-    <div class="flex items-center space-x-4">
-        <!-- Foto de perfil con iniciales -->
-        <div class="w-14 h-14 bg-gradient-to-br from-medical-primary to-medical-accent rounded-full flex items-center justify-center">
-            <span class="text-white text-lg font-bold"> {{ usuario.first_name.0 }}{{ usuario.last_name.0 }}</span>
-        </div>
-        
-        <!-- Nombre -->
-        <h1 class="text-2xl font-bold">{{ usuario.first_name }} {{ usuario.last_name }}</h1>
-    </div>
 
-    
+{% if modo == "detalle" %}
+    <div class="max-w-5xl mx-auto px-6 py-5">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Historial clínico — {{ paciente.get_full_name }}
+        </h2>
 
-    <!-- ================== DATOS BÁSICOS ================== -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <div>
-            <h2 class="text-lg font-semibold">Datos del Usuario</h2>
-            <ul class="mt-2 text-gray-700">
-                <li><strong>RUT:</strong> {{ usuario.rut }}</li>
-                <li><strong>Nombre:</strong> {{ usuario.first_name }} {{ usuario.last_name }}</li>
-                <li><strong>Email:</strong> {{ usuario.email }}</li>
-                <li><strong>Teléfono:</strong> {{ usuario.telefono }}</li>
-                <li><strong>Dirección:</strong> {{ usuario.direccion }}</li>
-                <li><strong>Fecha de nacimiento:</strong> {{ usuario.fecha_nac }}</li>
-            </ul>
-        </div>
-
-        <!-- ================== INFO MÉDICA ================== -->
-        <div>
-            <h2 class="text-lg font-semibold">Información Médica</h2>
-
-           <h3 class="mt-3 font-medium text-gray-800">Enfermedades</h3>
-            {% if usuario.enfermedades.exists %}
-                <ul class="text-gray-700">
-                    {% for enf in usuario.enfermedades.all %}
-                        <li>- {{ enf.nombre }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-600">No registra enfermedades.</p>
-            {% endif %}
-
-            <h3 class="mt-3 font-medium text-gray-800">Discapacidades</h3>
-            {% if usuario.discapacidades.exists %}
-                <ul class="text-gray-700">
-                    {% for dis in usuario.discapacidades.all %}
-                        <li>- {{ dis.nombre }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-600">No registra discapacidades.</p>
-            {% endif %}
-
-        </div>
-
-    </div>
-
-    <!-- ================== RECETAS MÉDICAS ================== -->
-    <div class="mt-10">
-        <h2 class="text-xl font-semibold mb-4">Recetas Médicas</h2>
-
-        {% if usuario.recetas_recibidas.exists %}
-            <div class="space-y-4">
-                {% for receta in usuario.recetas_recibidas.all %}
-                    <div class="border p-4 rounded-lg bg-gray-50">
-
-                        <p>
-                            <strong>Médico:</strong>
-                            {{ receta.doctor.first_name }} {{ receta.doctor.last_name }}
-                        </p>
-
-                        <p>
-                            <strong>Fecha emisión:</strong>
-                            {{ receta.fecha_emision }}
-                        </p>
-
-                        {% if receta.indicaciones %}
-                            <p class="mt-2">
-                                <strong>Indicaciones:</strong>
-                                {{ receta.indicaciones }}
-                            </p>
-                        {% endif %}
-                    </div>
+        <!-- ENFERMEDADES -->
+        <section class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Enfermedades</h3>
+            <div class="bg-gray-50 border rounded-lg p-4">
+                {% for e in paciente.enfermedades.all %}
+                    <span class="inline-block bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-full mr-2 mb-2">
+                        {{ e.nombre }}
+                    </span>
+                {% empty %}
+                    <p class="text-gray-500 italic">Sin registro</p>
                 {% endfor %}
             </div>
-        {% else %}
-            <p class="text-gray-600">No registra recetas prescritas.</p>
-        {% endif %}
+        </section>
+
+        <!-- DISCAPACIDADES -->
+        <section class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Discapacidades</h3>
+            <div class="bg-gray-50 border rounded-lg p-4">
+                {% for d in paciente.discapacidades.all %}
+                    <span class="inline-block bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-full mr-2 mb-2">
+                        {{ d.nombre }}
+                    </span>
+                {% empty %}
+                    <p class="text-gray-500 italic">Sin registro</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- RECETAS -->
+        <section>
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">Recetas médicas</h3>
+
+            {% for r in recetas %}
+                <div class="border rounded-lg p-5 mb-4 bg-white shadow-sm">
+
+                    <!-- HEADER -->
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-semibold text-gray-800">
+                            Receta #{{ r.id }}
+                        </h4>
+
+                        {% now "Y-m-d" as hoy %}
+                        {% if r.fecha_emision > hoy %}
+                            <span class="text-sm font-medium px-3 py-1 rounded-full bg-blue-100 text-blue-700">
+                                Futura
+                            </span>
+                        {% elif r.vigente_hasta < hoy %}
+                            <span class="text-sm font-medium px-3 py-1 rounded-full bg-red-100 text-red-700">
+                                Finalizada
+                            </span>
+                        {% else %}
+                            <span class="text-sm font-medium px-3 py-1 rounded-full bg-green-100 text-green-700">
+                                Vigente
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p>
+                            <strong>Emisión:</strong>
+                            {{ r.fecha_emision }} — {{ r.doctor.get_full_name }}
+                        </p>
+
+                        <p>
+                            <strong>Indicaciones:</strong><br>
+                            <span class="text-gray-600">{{ r.indicaciones }}</span>
+                        </p>
+
+                        <p>
+                            <strong>Vigente hasta:</strong>
+                            {{ r.vigente_hasta }}
+                        </p>
+                    </div>
+                </div>
+
+            {% empty %}
+                <p class="text-gray-500 italic">Sin recetas registradas</p>
+            {% endfor %}
+        </section>
     </div>
 
+{% else %} <!-- Si no está en modo detalle, mostrar todos los pacientes -->
+    {% for usuario in usuarios %}
+    <div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded shadow">
+        <div class="flex items-center space-x-4">
+            <!-- Foto de perfil con iniciales -->
+            <div class="w-14 h-14 bg-gradient-to-br from-medical-primary to-medical-accent rounded-full flex items-center justify-center">
+                <span class="text-white text-lg font-bold"> {{ usuario.first_name.0 }}{{ usuario.last_name.0 }}</span>
+            </div>
+            
+            <!-- Nombre -->
+            <h1 class="text-2xl font-bold">{{ usuario.first_name }} {{ usuario.last_name }}</h1>
+        </div>
 
-</div>
+        <!-- ================== DATOS BÁSICOS ================== -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-lg font-semibold">Datos del Usuario</h2>
+                <ul class="mt-2 text-gray-700">
+                    <li><strong>RUT:</strong> {{ usuario.rut }}</li>
+                    <li><strong>Nombre:</strong> {{ usuario.first_name }} {{ usuario.last_name }}</li>
+                    <li><strong>Email:</strong> {{ usuario.email }}</li>
+                    <li><strong>Teléfono:</strong> {{ usuario.telefono }}</li>
+                    <li><strong>Dirección:</strong> {{ usuario.direccion }}</li>
+                    <li><strong>Fecha de nacimiento:</strong> {{ usuario.fecha_nac }}</li>
+                </ul>
+            </div>
 
-{% endfor %}
+            <!-- ================== INFO MÉDICA ================== -->
+            <div>
+                <h2 class="text-lg font-semibold">Información Médica</h2>
+
+            <h3 class="mt-3 font-medium text-gray-800">Enfermedades</h3>
+                {% if usuario.enfermedades.exists %}
+                    <ul class="text-gray-700">
+                        {% for enf in usuario.enfermedades.all %}
+                            <li>- {{ enf.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-600">No registra enfermedades.</p>
+                {% endif %}
+
+                <h3 class="mt-3 font-medium text-gray-800">Discapacidades</h3>
+                {% if usuario.discapacidades.exists %}
+                    <ul class="text-gray-700">
+                        {% for dis in usuario.discapacidades.all %}
+                            <li>- {{ dis.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-600">No registra discapacidades.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ================== RECETAS MÉDICAS ================== -->
+        <div class="mt-10">
+            <h2 class="text-xl font-semibold mb-4">Recetas Médicas</h2>
+
+            {% if usuario.recetas_recibidas.exists %}
+                <div class="space-y-4">
+                    {% for receta in usuario.recetas_recibidas.all %}
+                        <div class="border p-4 rounded-lg bg-gray-50">
+
+                            <p><strong>Médico:</strong>
+                                {{ receta.doctor.first_name }} {{ receta.doctor.last_name }}
+                            </p>
+
+                            <p><strong>Fecha emisión:</strong>
+                                {{ receta.fecha_emision }}
+                            </p>
+
+                            {% if receta.indicaciones %}
+                                <p class="mt-2">
+                                    <strong>Indicaciones:</strong>
+                                    {{ receta.indicaciones }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No registra recetas prescritas.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+{% endif %}
 
 {% endblock %}
